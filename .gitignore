@@ -10,6 +10,8 @@
 !.yarn/releases
 !.yarn/versions
 
+private-key-firebase.json
+
 # testing
 /coverage
 

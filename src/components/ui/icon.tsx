@@ -1,0 +1,53 @@
+import {
+	SunIcon,
+	MoonIcon,
+	PlusIcon,
+	LockIcon,
+	UserIcon,
+	GearIcon,
+	HouseIcon,
+	SignOutIcon,
+	SparkleIcon,
+	CaretUpIcon,
+	WarningIcon,
+	ArchiveIcon,
+	EnvelopeIcon,
+	CaretDownIcon,
+	CaretLeftIcon,
+	CaretRightIcon,
+	CreditCardIcon,
+	GoogleLogoIcon,
+	UsersThreeIcon,
+	CircleNotchIcon,
+	CaretUpDownIcon,
+	ArrowUpRightIcon,
+	AsteriskSimpleIcon
+} from '@phosphor-icons/react/dist/ssr'
+
+export const Icon = {
+	sun: SunIcon,
+	moon: MoonIcon,
+	plus: PlusIcon,
+	lock: LockIcon,
+	user: UserIcon,
+	gear: GearIcon,
+	house: HouseIcon,
+	alert: WarningIcon,
+	signOut: SignOutIcon,
+	caretUp: CaretUpIcon,
+	sparkle: SparkleIcon,
+	archive: ArchiveIcon,
+	users: UsersThreeIcon,
+	google: GoogleLogoIcon,
+	envelope: EnvelopeIcon,
+	loading: CircleNotchIcon,
+	caretDown: CaretDownIcon,
+	caretLeft: CaretLeftIcon,
+	creditCard: CreditCardIcon,
+	caretRight: CaretRightIcon,
+	caretUpDown: CaretUpDownIcon,
+	asterisk: AsteriskSimpleIcon,
+	arrowUpRight: ArrowUpRightIcon
+}
+
+export type IconType = keyof typeof Icon

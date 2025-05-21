@@ -3,15 +3,11 @@ import type { JSX } from 'react'
 import { parseCookies } from 'nookies'
 import type { GetServerSideProps, NextPage } from 'next'
 
-import type { Company } from '@/types'
-import { useAuth } from '@/hooks/use-auth'
 import { withSSRAuth } from '@/utils/with-ssr'
-import { Button } from '@/components/ui/button'
 import { firestore } from '@/lib/firebase-admin'
+import { Header, FormNewCompany } from '@/components/pages/setup'
 
-const Home: NextPage = (): JSX.Element => {
-	const { logout } = useAuth()
-
+const Setup: NextPage = (): JSX.Element => {
 	return (
 		<>
 			<Head>
@@ -19,17 +15,23 @@ const Home: NextPage = (): JSX.Element => {
 			</Head>
 
 			<div className='flex min-h-svh flex-col'>
-				<main className='flex flex-1 flex-col items-center justify-center'>
-					<h2>Olá mundo</h2>
+				<Header />
 
-					<Button onClick={logout}>Sair</Button>
+				<main className='flex flex-1 flex-col items-center gap-6 py-6'>
+					<div className='mx-auto w-full max-w-xl space-y-6'>
+						<h2 className='scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight first:mt-0'>
+							Criar uma nova empresa
+						</h2>
+
+						<FormNewCompany />
+					</div>
 				</main>
 			</div>
 		</>
 	)
 }
 
-export default Home
+export default Setup
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(async ctx => {
 	const cookies = parseCookies(ctx)
@@ -37,20 +39,16 @@ export const getServerSideProps: GetServerSideProps = withSSRAuth(async ctx => {
 
 	const doc = await firestore.collection('companies').doc(userUid).get()
 
-	if (!doc.exists) {
+	if (doc.exists) {
 		return {
 			redirect: {
-				destination: '/setup',
+				destination: '/',
 				permanent: false
 			}
 		}
 	}
 
-	const company = doc.data() as Company
-
 	return {
-		props: {
-			company
-		}
+		props: {}
 	}
 })
