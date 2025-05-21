@@ -5,28 +5,28 @@ import type { GetServerSideProps } from 'next'
 
 import type { Company } from '@/types'
 import { Header } from '@/components/app'
-import { NextPageWithLayout } from './_app'
+import { NextPageWithLayout } from '../_app'
 import { withSSRAuth } from '@/utils/with-ssr'
 import { firestore } from '@/lib/firebase-admin'
 import { AppSidebar } from '@/components/app/sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
-const Home: NextPageWithLayout = (): JSX.Element => {
+const Product: NextPageWithLayout = (): JSX.Element => {
 	return (
 		<>
 			<Head>
-				<title>GestorLy - Seu gestor de empresas online</title>
+				<title>Produtos | GestorLy - Seu gestor de empresas online</title>
 			</Head>
 
 			<div className='flex flex-1 flex-col'>
 				<main className='flex flex-1 flex-col items-center justify-center'>
-					<h2>Olá mundo</h2>
+					<h2>Página de produtos</h2>
 				</main>
 			</div>
 		</>
 	)
 }
-Home.getLayout = function getLayout(page: ReactElement) {
+Product.getLayout = function getLayout(page: ReactElement) {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
@@ -40,7 +40,7 @@ Home.getLayout = function getLayout(page: ReactElement) {
 	)
 }
 
-export default Home
+export default Product
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(async ctx => {
 	const cookies = parseCookies(ctx)
