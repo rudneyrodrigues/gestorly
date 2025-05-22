@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { memo, type FC, type JSX } from 'react'
 
+import { Icon } from '../ui/icon'
+import { Button } from '../ui/button'
 import { SidebarTrigger } from '../ui/sidebar'
 
 const Header: FC = memo((): JSX.Element => {
@@ -10,6 +12,19 @@ const Header: FC = memo((): JSX.Element => {
 				<SidebarTrigger className='size-9' />
 
 				<Link href='/'>GestorLy</Link>
+
+				<div className='ml-auto flex items-center justify-center gap-2'>
+					<Button
+						variant='outline'
+						rightIcon='magnifyingGlass'
+						className='cursor-pointer'
+					>
+						Pesquisar na plataforma
+					</Button>
+					<Button size='icon' variant='outline'>
+						<Icon.bell size={5} />
+					</Button>
+				</div>
 			</div>
 		</header>
 	)

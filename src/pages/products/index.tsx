@@ -3,6 +3,7 @@ import type { JSX, ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
 
 import { withSSRAuth } from '@/utils/with-ssr'
+import { Button } from '@/components/ui/button'
 import type { NextPageWithLayout } from '@/types'
 import { withCompany } from '@/utils/with-company'
 import { Layout } from '@/components/pages/layout'
@@ -16,7 +17,13 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 
 			<div className='flex flex-1 flex-col'>
 				<main className='container mx-auto flex flex-1 flex-col'>
-					<h2>Página de produtos</h2>
+					<div className='my-6 flex items-center justify-between gap-2 rounded-md border p-4'>
+						<h2>Produtos</h2>
+
+						<Button size='sm' variant='secondary' rightIcon='plus'>
+							Adicionar produto
+						</Button>
+					</div>
 				</main>
 			</div>
 		</>
