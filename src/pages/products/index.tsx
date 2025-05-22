@@ -1,15 +1,11 @@
 import Head from 'next/head'
-import { parseCookies } from 'nookies'
 import type { JSX, ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
 
-import type { Company } from '@/types'
-import { Header } from '@/components/app'
-import { NextPageWithLayout } from '../_app'
 import { withSSRAuth } from '@/utils/with-ssr'
-import { firestore } from '@/lib/firebase-admin'
-import { AppSidebar } from '@/components/app/sidebar'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import type { NextPageWithLayout } from '@/types'
+import { withCompany } from '@/utils/with-company'
+import { Layout } from '@/components/pages/layout'
 
 const Product: NextPageWithLayout = (): JSX.Element => {
 	return (
@@ -19,7 +15,7 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 			</Head>
 
 			<div className='flex flex-1 flex-col'>
-				<main className='flex flex-1 flex-col items-center justify-center'>
+				<main className='container mx-auto flex flex-1 flex-col'>
 					<h2>Página de produtos</h2>
 				</main>
 			</div>
@@ -27,41 +23,15 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 	)
 }
 Product.getLayout = function getLayout(page: ReactElement) {
-	return (
-		<SidebarProvider>
-			<AppSidebar />
-
-			<SidebarInset>
-				<Header />
-
-				{page}
-			</SidebarInset>
-		</SidebarProvider>
-	)
+	return <Layout>{page}</Layout>
 }
 
 export default Product
 
-export const getServerSideProps: GetServerSideProps = withSSRAuth(async ctx => {
-	const cookies = parseCookies(ctx)
-	const userUid = cookies['@user.uid']
-
-	const doc = await firestore.collection('companies').doc(userUid).get()
-
-	if (!doc.exists) {
+export const getServerSideProps: GetServerSideProps = withSSRAuth(
+	withCompany(async () => {
 		return {
-			redirect: {
-				destination: '/setup',
-				permanent: false
-			}
+			props: {}
 		}
-	}
-
-	const company = doc.data() as Company
-
-	return {
-		props: {
-			company
-		}
-	}
-})
+	})
+)
