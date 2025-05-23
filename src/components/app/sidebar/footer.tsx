@@ -3,6 +3,8 @@ import { memo, type FC, type JSX } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { Icon } from '@/components/ui/icon'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useGetUser } from '@/hooks/swr/use-get-user'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
 	useSidebar,
@@ -21,10 +23,24 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 const FooterAppSidebar: FC = memo((): JSX.Element => {
+	const { logout } = useAuth()
 	const { isMobile } = useSidebar()
-	const { user, logout } = useAuth()
+	const { user, error, loading } = useGetUser()
 
-	if (!user) return <Skeleton className='min-h-10 w-full' />
+	if (loading) return <Skeleton className='min-h-10 w-full' />
+
+	if (error || !user) {
+		return (
+			<Alert>
+				<Icon.alert size={5} />
+				<AlertTitle>Erro ao carregar usuário</AlertTitle>
+				<AlertDescription>
+					{error?.message ||
+						'Não foi possível carregar as informações do usuário.'}
+				</AlertDescription>
+			</Alert>
+		)
+	}
 
 	return (
 		<SidebarMenu>

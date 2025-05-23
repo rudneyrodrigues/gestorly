@@ -1,3 +1,4 @@
+import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 import { initializeApp, cert, getApps, getApp } from 'firebase-admin/app'
 
@@ -10,5 +11,6 @@ const app = !getApps().length
 	: getApp()
 
 const firestore = getFirestore(app)
+const auth = getAuth(app)
 
-export { app, firestore }
+export { app, auth, firestore }

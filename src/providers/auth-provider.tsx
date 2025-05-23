@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { destroyCookie, setCookie } from 'nookies'
 import { createContext, ReactNode, useState, useEffect } from 'react'
 import {
-	User,
 	signOut,
 	updateProfile,
 	signInWithPopup,
@@ -21,7 +20,6 @@ interface AuthProviderProps {
 }
 
 export interface AuthContextData {
-	user: User
 	loading: boolean
 	logout: () => Promise<void>
 	loginWithGoogle: () => Promise<void>
@@ -41,7 +39,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
-	const [user, setUser] = useState<User>({} as User)
 
 	const loginWithGoogle = async () => {
 		setLoading(true)
@@ -59,7 +56,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 					maxAge: THREE_HOURS_IN_SECONDS,
 					secure: process.env.NODE_ENV === 'production'
 				})
-				setUser(user)
 
 				router.push('/')
 			})
@@ -86,7 +82,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 					maxAge: THREE_HOURS_IN_SECONDS,
 					secure: process.env.NODE_ENV === 'production'
 				})
-				setUser(user)
 
 				router.push('/')
 			})
@@ -120,7 +115,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 					maxAge: THREE_HOURS_IN_SECONDS,
 					secure: process.env.NODE_ENV === 'production'
 				})
-				setUser(user)
 
 				router.push('/')
 			})
@@ -164,7 +158,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				throw new Error('Error signing out')
 			})
 			.finally(() => {
-				setUser({} as User)
 				setLoading(false)
 				destroyCookie(null, '@user.uid', { path: '/' })
 
@@ -175,14 +168,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async user => {
 			if (user) {
-				setUser(user)
 				setCookie(null, '@user.uid', user.uid, {
 					path: '/',
 					maxAge: THREE_HOURS_IN_SECONDS,
 					secure: process.env.NODE_ENV === 'production'
 				})
 			} else {
-				setUser({} as User)
 				destroyCookie(null, '@user.uid', { path: '/' })
 			}
 		})
@@ -193,7 +184,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	return (
 		<AuthContext.Provider
 			value={{
-				user,
 				logout,
 				loading,
 				forgotPassword,

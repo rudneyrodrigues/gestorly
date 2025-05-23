@@ -1,7 +1,9 @@
 import { memo, type FC, type JSX } from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
+import { Icon } from '@/components/ui/icon'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useGetUser } from '@/hooks/swr/use-get-user'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
 	DropdownMenu,
@@ -14,9 +16,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 const UserMenu: FC = memo((): JSX.Element => {
-	const { user, logout } = useAuth()
+	const { logout } = useAuth()
+	const { user, error, loading } = useGetUser()
 
-	if (!user) return <Skeleton className='size-9 rounded-full' />
+	if (loading) return <Skeleton className='size-9 rounded-full' />
+
+	if (error || !user) {
+		return (
+			<div className='border-destructive bg-destructive/20 flex size-9 items-center justify-center rounded-full border'>
+				<Icon.alert />
+			</div>
+		)
+	}
 
 	return (
 		<DropdownMenu>

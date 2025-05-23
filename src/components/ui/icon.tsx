@@ -12,6 +12,8 @@ import {
 	WarningIcon,
 	ArchiveIcon,
 	EnvelopeIcon,
+	EyeSlashIcon,
+	DotsThreeIcon,
 	CaretDownIcon,
 	CaretLeftIcon,
 	BellSimpleIcon,
@@ -23,7 +25,9 @@ import {
 	CaretUpDownIcon,
 	ArrowUpRightIcon,
 	AsteriskSimpleIcon,
-	MagnifyingGlassIcon
+	MagnifyingGlassIcon,
+	CaretDoubleLeftIcon,
+	CaretDoubleRightIcon
 } from '@phosphor-icons/react/dist/ssr'
 
 export const Icon = {
@@ -35,6 +39,7 @@ export const Icon = {
 	gear: GearIcon,
 	house: HouseIcon,
 	alert: WarningIcon,
+	more: DotsThreeIcon,
 	bell: BellSimpleIcon,
 	signOut: SignOutIcon,
 	caretUp: CaretUpIcon,
@@ -43,6 +48,7 @@ export const Icon = {
 	users: UsersThreeIcon,
 	google: GoogleLogoIcon,
 	envelope: EnvelopeIcon,
+	eyeSlash: EyeSlashIcon,
 	loading: CircleNotchIcon,
 	caretDown: CaretDownIcon,
 	caretLeft: CaretLeftIcon,
@@ -51,7 +57,9 @@ export const Icon = {
 	caretUpDown: CaretUpDownIcon,
 	asterisk: AsteriskSimpleIcon,
 	arrowUpRight: ArrowUpRightIcon,
-	magnifyingGlass: MagnifyingGlassIcon
+	magnifyingGlass: MagnifyingGlassIcon,
+	caretDoubleLeft: CaretDoubleLeftIcon,
+	caretDoubleRight: CaretDoubleRightIcon
 }
 
 export type IconType = keyof typeof Icon
