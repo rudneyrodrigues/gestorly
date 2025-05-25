@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import type { JSX, ReactElement } from 'react'
+import { lazy, Suspense, type JSX, type ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
 
 import { cn } from '@/lib/utils'
@@ -10,7 +10,11 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import type { NextPageWithLayout } from '@/types'
 import { withCompany } from '@/utils/with-company'
 import { Layout } from '@/components/pages/layout'
-import { columns, DataTable, payments } from '@/components/pages/products'
+import { columns, payments, DataTable } from '@/components/pages/products'
+
+const ModalNewProduct = lazy(
+	() => import('@/components/pages/products/modal-new-product')
+)
 
 const Product: NextPageWithLayout = (): JSX.Element => {
 	const isMobile = useIsMobile()
@@ -28,12 +32,32 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 							Produtos
 						</h2>
 
-						<Button size={isMobile ? 'icon' : 'default'} variant='secondary'>
-							<span className={cn('hidden', !isMobile && 'inline-flex')}>
-								Adicionar produto
-							</span>
-							<Icon.plus />
-						</Button>
+						<Suspense
+							fallback={
+								<Button
+									loading
+									variant='secondary'
+									size={isMobile ? 'icon' : 'default'}
+								>
+									<span className={cn('hidden', !isMobile && 'inline-flex')}>
+										Adicionar produto
+									</span>
+									<Icon.plus />
+								</Button>
+							}
+						>
+							<ModalNewProduct>
+								<Button
+									variant='secondary'
+									size={isMobile ? 'icon' : 'default'}
+								>
+									<span className={cn('hidden', !isMobile && 'inline-flex')}>
+										Adicionar produto
+									</span>
+									<Icon.plus />
+								</Button>
+							</ModalNewProduct>
+						</Suspense>
 					</div>
 
 					<section className='w-full flex-1 rounded-md'>
