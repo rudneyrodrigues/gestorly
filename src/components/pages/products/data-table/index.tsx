@@ -64,10 +64,10 @@ const DataTable = <TData, TValue>({
 		<div className='w-full space-y-4'>
 			<div className='flex items-center gap-2'>
 				<Input
-					placeholder='Filter emails...'
-					value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+					placeholder='Filtrar produtos pelo nome...'
+					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 					onChange={event =>
-						table.getColumn('email')?.setFilterValue(event.target.value)
+						table.getColumn('name')?.setFilterValue(event.target.value)
 					}
 					className='max-w-sm'
 				/>
@@ -120,7 +120,7 @@ const DataTable = <TData, TValue>({
 									colSpan={columns.length}
 									className='h-24 text-center'
 								>
-									No results.
+									Nenhum produto encontrado.
 								</TableCell>
 							</TableRow>
 						)}

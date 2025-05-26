@@ -7,8 +7,8 @@ import {
 	DropdownMenu,
 	DropdownMenuItem,
 	DropdownMenuContent,
-	DropdownMenuTrigger,
-	DropdownMenuSeparator
+	DropdownMenuTrigger
+	// DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
 interface DataTableColumnHeaderProps<TData, TValue>
@@ -48,17 +48,17 @@ const DataTableColumnHeader = <TData, TValue>({
 				<DropdownMenuContent align='start'>
 					<DropdownMenuItem onClick={() => column.toggleSorting(false)}>
 						<Icon.caretUp size={14} className='text-muted-foreground/70' />
-						Asc
+						Crescente
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => column.toggleSorting(true)}>
 						<Icon.caretDown size={14} className='text-muted-foreground/70' />
-						Desc
+						Decrescente
 					</DropdownMenuItem>
-					<DropdownMenuSeparator />
+					{/* <DropdownMenuSeparator />
 					<DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
 						<Icon.eyeSlash size={14} className='text-muted-foreground/70' />
 						Hide
-					</DropdownMenuItem>
+					</DropdownMenuItem> */}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>

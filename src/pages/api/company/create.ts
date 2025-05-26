@@ -18,7 +18,7 @@ export default async function createCompany(
 		const userUid = cookies['@user.uid']
 
 		if (!userUid) {
-			return res.status(401).json({ message: 'Unauthorized' })
+			return res.redirect(302, '/sign-in')
 		}
 
 		const company = {

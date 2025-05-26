@@ -1,6 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 
+import { Product } from '@/types'
 import { Icon } from '@/components/ui/icon'
+import { formatPrice } from '@/utils/format'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './column-header'
@@ -13,16 +15,7 @@ import {
 	DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
-// Este tipo é usado para definir o formato dos nossos dados.
-// Você pode usar um esquema Zod aqui, se desejar.
-export type Payment = {
-	id: string
-	amount: number
-	status: 'pending' | 'processing' | 'success' | 'failed'
-	email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Product>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -46,28 +39,43 @@ export const columns: ColumnDef<Payment>[] = [
 		enableHiding: false
 	},
 	{
-		accessorKey: 'status',
+		accessorKey: 'name',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Status' />
+			<DataTableColumnHeader column={column} title='Produto' />
 		)
 	},
 	{
-		accessorKey: 'email',
+		accessorKey: 'stock',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Email' />
+			<DataTableColumnHeader column={column} title='Estoque' />
 		)
 	},
 	{
-		accessorKey: 'amount',
+		accessorKey: 'price',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Actions' />
+			<DataTableColumnHeader column={column} title='Preço' />
 		),
 		cell: ({ row }) => {
-			const amount = parseFloat(row.getValue('amount'))
-			const formatted = new Intl.NumberFormat('en-US', {
-				style: 'currency',
-				currency: 'USD'
-			}).format(amount)
+			const price = String(row.getValue('price'))
+			const formatted = formatPrice(price)
+
+			return <div className='font-medium'>{formatted}</div>
+		}
+	},
+	{
+		accessorKey: 'updatedAt',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Atualizado em' />
+		),
+		cell: ({ row }) => {
+			const updatedAt = String(row.getValue('updatedAt'))
+			const formatted = new Date(updatedAt).toLocaleDateString('pt-BR', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit'
+			})
 
 			return <div className='font-medium'>{formatted}</div>
 		}
@@ -81,21 +89,21 @@ export const columns: ColumnDef<Payment>[] = [
 				<div className='flex items-center justify-end'>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant='ghost' className='ml-auto size-8 p-0'>
-								<span className='sr-only'>Open menu</span>
+							<Button variant='ghost' className='size-8 p-0'>
+								<span className='sr-only'>Abrir menu</span>
 								<Icon.more size={4} />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end'>
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuLabel>Ações</DropdownMenuLabel>
 							<DropdownMenuItem
 								onClick={() => navigator.clipboard.writeText(payment.id)}
 							>
-								Copy payment ID
+								Copiar ID do produto
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>View customer</DropdownMenuItem>
-							<DropdownMenuItem>View payment details</DropdownMenuItem>
+							<DropdownMenuItem>Ver detalhes</DropdownMenuItem>
+							<DropdownMenuItem>Deletar produto</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

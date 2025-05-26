@@ -29,8 +29,8 @@ const DataTablePagination = <TData,>({
 			)}
 		>
 			<div className='text-muted-foreground flex-1 text-sm'>
-				{table.getFilteredSelectedRowModel().rows.length} of{' '}
-				{table.getFilteredRowModel().rows.length} row(s) selected.
+				{table.getFilteredSelectedRowModel().rows.length} de{' '}
+				{table.getFilteredRowModel().rows.length} produto(s) selecionado(s).
 			</div>
 
 			<div
@@ -45,7 +45,7 @@ const DataTablePagination = <TData,>({
 						!isMobile && 'w-auto'
 					)}
 				>
-					<p className='text-sm font-medium'>Rows per page</p>
+					<p className='text-sm font-medium'>Produtos por página</p>
 					<Select
 						value={`${table.getState().pagination.pageSize}`}
 						onValueChange={value => {
@@ -71,7 +71,7 @@ const DataTablePagination = <TData,>({
 						!isMobile && 'w-auto justify-center'
 					)}
 				>
-					Page {table.getState().pagination.pageIndex + 1} of{' '}
+					Página {table.getState().pagination.pageIndex + 1} de{' '}
 					{table.getPageCount()}
 				</div>
 
@@ -87,7 +87,7 @@ const DataTablePagination = <TData,>({
 						onClick={() => table.setPageIndex(0)}
 						disabled={!table.getCanPreviousPage()}
 					>
-						<span className='sr-only'>Go to first page</span>
+						<span className='sr-only'>Ir para a primeira página</span>
 						<Icon.caretDoubleLeft />
 					</Button>
 					<Button
@@ -96,7 +96,7 @@ const DataTablePagination = <TData,>({
 						onClick={() => table.previousPage()}
 						disabled={!table.getCanPreviousPage()}
 					>
-						<span className='sr-only'>Go to previous page</span>
+						<span className='sr-only'>Ir para a página anterior</span>
 						<Icon.caretLeft />
 					</Button>
 					<Button
@@ -105,7 +105,7 @@ const DataTablePagination = <TData,>({
 						onClick={() => table.nextPage()}
 						disabled={!table.getCanNextPage()}
 					>
-						<span className='sr-only'>Go to next page</span>
+						<span className='sr-only'>Ir para a próxima página</span>
 						<Icon.caretRight />
 					</Button>
 					<Button
@@ -114,7 +114,7 @@ const DataTablePagination = <TData,>({
 						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
 						disabled={!table.getCanNextPage()}
 					>
-						<span className='sr-only'>Go to last page</span>
+						<span className='sr-only'>Ir para a última página</span>
 						<Icon.caretDoubleRight />
 					</Button>
 				</div>

@@ -28,16 +28,18 @@ const DataTableViewOptions = <TData,>({
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
-					size={isMobile ? 'icon' : 'lg'}
+					size={isMobile ? 'icon' : 'sm'}
 					variant='outline'
-					className='ml-auto min-h-10 min-w-10'
+					className='ml-auto'
 				>
-					<span className={cn('hidden', !isMobile && 'inline-flex')}>View</span>
+					<span className={cn('hidden', !isMobile && 'inline-flex')}>
+						Configurações
+					</span>
 					<Icon.gear />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end' className='w-[150px]'>
-				<DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+				<DropdownMenuLabel>Alterar colunas</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				{table
 					.getAllColumns()

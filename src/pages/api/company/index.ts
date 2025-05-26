@@ -29,7 +29,6 @@ export default async function createCompany(
 
 			return res.status(200).json({ company })
 		} catch (error) {
-			console.error('Error fetching company:', error)
 			return res.status(500).json({ message: 'Internal server error' })
 		}
 	}

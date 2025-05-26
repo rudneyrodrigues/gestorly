@@ -12,14 +12,12 @@ import {
 
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
-import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
 import { formatPrice, formatNumber } from '@/utils/format'
-import { useGetCompany } from '@/hooks/swr/use-get-company'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { useGetProducts } from '@/hooks/swr/use-get-products'
 import {
 	newProductSchema,
 	type NewProductSchemaType
@@ -46,7 +44,7 @@ type IFormNewProduct = {
 
 const FormNewProduct: FC<IFormNewProduct> = memo(
 	({ className, setIsOpenModal, ...props }): JSX.Element => {
-		const { error, company, loading } = useGetCompany()
+		const { mutate: mutateProducts } = useGetProducts()
 
 		const form = useForm<NewProductSchemaType>({
 			resolver: zodResolver(newProductSchema),
@@ -65,14 +63,14 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 			const product = {
 				...values,
 				price: values.price.replace(/\D/g, ''),
-				stock: values.stock.replace(/\D/g, ''),
-				companyId: company?.cpf_or_cnpj
+				stock: values.stock.replace(/\D/g, '')
 			}
 
 			await api
-				.post('/product/create', product)
+				.post('/products/create', product)
 				.then(() => {
 					toast.success('Produto cadastrado com sucesso!')
+					mutateProducts() // Revalidate the products list
 				})
 				.catch(error => {
 					switch (error.response.status) {
@@ -100,29 +98,6 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 			if (setIsOpenModal) {
 				setIsOpenModal(false)
 			}
-		}
-
-		if (loading) {
-			return (
-				<div className='flex h-full w-full items-center justify-center gap-4'>
-					<Icon.loading className='animate-spin' />
-					<span className='text-muted-foreground animate-bounce'>
-						Carregando dados da empresa...
-					</span>
-				</div>
-			)
-		}
-
-		if (error || !company) {
-			return (
-				<Alert>
-					<AlertTitle>Erro ao carregar dados da empresa</AlertTitle>
-					<AlertDescription>
-						Não foi possível carregar os dados da empresa. Verifique se você
-						está logado e se a empresa está cadastrada.
-					</AlertDescription>
-				</Alert>
-			)
 		}
 
 		return (
