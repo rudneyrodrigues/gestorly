@@ -13,8 +13,8 @@ import {
 } from '@tanstack/react-table'
 
 import { Input } from '@/components/ui/input'
-import { DataTablePagination } from './data-table-pagination'
-import { DataTableViewOptions } from './data-table-view-options'
+import { DataTablePagination } from './pagination'
+import { DataTableViewOptions } from './view-options'
 import {
 	Table,
 	TableRow,
@@ -135,3 +135,5 @@ const DataTable = <TData, TValue>({
 DataTable.displayName = 'DataTable'
 
 export { DataTable }
+export * from './columns'
+export * from './payments'

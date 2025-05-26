@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/ui/icon'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DataTableColumnHeader } from './data-table-column-header'
+import { DataTableColumnHeader } from './column-header'
 import {
 	DropdownMenu,
 	DropdownMenuItem,
