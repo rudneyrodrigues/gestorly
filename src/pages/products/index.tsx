@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import type { JSX, ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
 
@@ -13,12 +14,8 @@ import { Layout } from '@/components/pages/layout'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { useGetProducts } from '@/hooks/swr/use-get-products'
+import { columns, DataTable } from '@/components/pages/products'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import {
-	columns,
-	DataTable,
-	ModalNewProduct
-} from '@/components/pages/products'
 
 const Product: NextPageWithLayout = (): JSX.Element => {
 	const isMobile = useIsMobile()
@@ -131,14 +128,18 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 							Produtos
 						</h2>
 
-						<ModalNewProduct>
-							<Button variant='secondary' size={isMobile ? 'icon' : 'default'}>
+						<Link href='/products/create' passHref>
+							<Button
+								variant='secondary'
+								size={isMobile ? 'icon' : 'default'}
+								className='cursor-pointer'
+							>
 								<span className={cn('hidden', !isMobile && 'inline-flex')}>
 									Adicionar produto
 								</span>
 								<Icon.plus />
 							</Button>
-						</ModalNewProduct>
+						</Link>
 					</div>
 
 					<section className='w-full flex-1 rounded-md'>
