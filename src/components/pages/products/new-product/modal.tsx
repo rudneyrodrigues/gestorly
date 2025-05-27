@@ -37,45 +37,45 @@ type IModalNewProduct = {
 
 const ModalNewProduct: FC<IModalNewProduct> = memo(
 	({ children }): JSX.Element => {
-		const isMobile = useIsMobile()
+		// const isMobile = useIsMobile()
 		const [isOpen, setIsOpen] = useState(false)
 
-		if (isMobile) {
-			return (
-				<Drawer open={isOpen} onOpenChange={setIsOpen}>
-					<DrawerTrigger asChild>{children}</DrawerTrigger>
+		// if (isMobile) {
+		// 	return (
+		// 		<Drawer open={isOpen} onOpenChange={setIsOpen}>
+		// 			<DrawerTrigger asChild>{children}</DrawerTrigger>
 
-					<DrawerContent>
-						<DrawerHeader>
-							<DrawerTitle>Adicionar produto</DrawerTitle>
-							<DrawerDescription>
-								Preencha os campos abaixo para adicionar um novo produto.
-							</DrawerDescription>
-						</DrawerHeader>
+		// 			<DrawerContent>
+		// 				<DrawerHeader>
+		// 					<DrawerTitle>Adicionar produto</DrawerTitle>
+		// 					<DrawerDescription>
+		// 						Preencha os campos abaixo para adicionar um novo produto.
+		// 					</DrawerDescription>
+		// 				</DrawerHeader>
 
-						<Separator />
+		// 				<Separator />
 
-						<ScrollArea className='overflow-auto'>
-							<Suspense
-								fallback={
-									<div className='flex h-full w-full items-center justify-center'>
-										<Icon.loading className='animate-spin' />
-									</div>
-								}
-							>
-								<FormNewProduct setIsOpenModal={setIsOpen} className='p-4' />
-							</Suspense>
-						</ScrollArea>
-					</DrawerContent>
-				</Drawer>
-			)
-		}
+		// 				<ScrollArea className='overflow-auto'>
+		// 					<Suspense
+		// 						fallback={
+		// 							<div className='flex h-full w-full items-center justify-center'>
+		// 								<Icon.loading className='animate-spin' />
+		// 							</div>
+		// 						}
+		// 					>
+		// 						<FormNewProduct setIsOpenModal={setIsOpen} className='p-4' />
+		// 					</Suspense>
+		// 				</ScrollArea>
+		// 			</DrawerContent>
+		// 		</Drawer>
+		// 	)
+		// }
 
 		return (
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogTrigger asChild>{children}</DialogTrigger>
 
-				<DialogContent>
+				<DialogContent className='sm:max-w-2xl'>
 					<DialogHeader>
 						<DialogTitle>Adicionar produto</DialogTitle>
 						<DialogDescription>

@@ -1,4 +1,5 @@
 import {
+	XIcon,
 	SunIcon,
 	MoonIcon,
 	PlusIcon,
@@ -6,6 +7,7 @@ import {
 	UserIcon,
 	GearIcon,
 	HouseIcon,
+	CheckIcon,
 	SignOutIcon,
 	SparkleIcon,
 	CaretUpIcon,
@@ -31,12 +33,14 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 
 export const Icon = {
+	x: XIcon,
 	sun: SunIcon,
 	moon: MoonIcon,
 	plus: PlusIcon,
 	lock: LockIcon,
 	user: UserIcon,
 	gear: GearIcon,
+	check: CheckIcon,
 	house: HouseIcon,
 	alert: WarningIcon,
 	more: DotsThreeIcon,

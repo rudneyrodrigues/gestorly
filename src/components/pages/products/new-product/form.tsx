@@ -5,6 +5,7 @@ import {
 	memo,
 	type FC,
 	type JSX,
+	useState,
 	type Dispatch,
 	ComponentProps,
 	type SetStateAction
@@ -13,6 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
 import { Input } from '@/components/ui/input'
+import { UploadImages } from './upload-images'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
@@ -44,6 +46,7 @@ type IFormNewProduct = {
 
 const FormNewProduct: FC<IFormNewProduct> = memo(
 	({ className, setIsOpenModal, ...props }): JSX.Element => {
+		const [images, setImages] = useState<File[]>([])
 		const { mutate: mutateProducts } = useGetProducts()
 
 		const form = useForm<NewProductSchemaType>({
@@ -108,7 +111,7 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 					{...props}
 				>
 					<div className='flex flex-col gap-4'>
-						<div className='flex w-full flex-col gap-4'>
+						<div className='grid grid-cols-1 items-start gap-4 sm:grid-cols-2'>
 							<FormField
 								name='name'
 								control={form.control}
@@ -127,27 +130,6 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 								)}
 							/>
 							<FormField
-								name='description'
-								control={form.control}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Descrição do produto</FormLabel>
-										<FormControl>
-											<Textarea
-												rows={5}
-												placeholder='Notebook Dell Inspiron com 16GB de RAM e 512GB de SSD'
-												className='max-h-40 resize-none'
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-
-						<div className={cn('grid grid-cols-1 items-start gap-4')}>
-							<FormField
 								name='category'
 								control={form.control}
 								render={({ field }) => (
@@ -155,7 +137,7 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 										<FormLabel>Categoria</FormLabel>
 										<FormControl>
 											<Select onValueChange={field.onChange}>
-												<SelectTrigger className='w-full'>
+												<SelectTrigger className='min-h-10 w-full'>
 													<SelectValue placeholder='Selecione uma categoria' />
 												</SelectTrigger>
 
@@ -170,6 +152,27 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 													))}
 												</SelectContent>
 											</Select>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className='flex w-full flex-col gap-4'>
+							<FormField
+								name='description'
+								control={form.control}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Descrição do produto</FormLabel>
+										<FormControl>
+											<Textarea
+												rows={5}
+												placeholder='Notebook Dell Inspiron com 16GB de RAM e 512GB de SSD'
+												className='max-h-40 resize-none'
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -282,6 +285,8 @@ const FormNewProduct: FC<IFormNewProduct> = memo(
 								)}
 							/>
 						</div>
+
+						<UploadImages images={images} setImages={setImages} />
 					</div>
 
 					<Button

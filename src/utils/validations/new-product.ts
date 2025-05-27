@@ -34,7 +34,9 @@ export const newProductSchema = z.object({
 		.min(2, 'Categoria do produto deve ter pelo menos 2 caracteres')
 		.max(100)
 		.nonempty('Categoria do produto é obrigatória')
-	// images: z.array(z.string().url()).min(1, 'Pelo menos uma imagem é obrigatória')
+	// images: z
+	// 	.array(z.string().url('URL inválida'))
+	// 	.min(1, 'Pelo menos uma imagem é obrigatória')
 })
 
 export type NewProductSchemaType = z.infer<typeof newProductSchema>

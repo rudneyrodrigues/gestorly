@@ -155,4 +155,20 @@
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
 	}
+
+	div,
+	body,
+	textarea {
+		&::-webkit-scrollbar {
+			@apply w-1;
+		}
+
+		&::-webkit-scrollbar-track {
+			@apply bg-muted;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			@apply bg-primary cursor-default rounded;
+		}
+	}
 }
