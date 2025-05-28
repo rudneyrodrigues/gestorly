@@ -1,18 +1,14 @@
 import { toast } from 'sonner'
+import { parseCookies } from 'nookies'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-	memo,
-	type FC,
-	type JSX,
-	useState,
-	type Dispatch,
-	ComponentProps,
-	type SetStateAction
-} from 'react'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { memo, type FC, type JSX, useState, ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
+import { storage } from '@/lib/firebase'
 import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
 import { UploadImages } from './upload-images'
@@ -20,7 +16,6 @@ import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
 import { formatPrice, formatNumber } from '@/utils/format'
-import { useGetProducts } from '@/hooks/swr/use-get-products'
 import {
 	newProductSchema,
 	type NewProductSchemaType
@@ -41,14 +36,14 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 
-type IFormNewProduct = {
-	setIsOpenModal?: Dispatch<SetStateAction<boolean>>
-} & ComponentProps<'form'>
+type IFormNewProduct = {} & ComponentProps<'form'>
 
 const FormCreateProduct: FC<IFormNewProduct> = memo(
-	({ className, setIsOpenModal, ...props }): JSX.Element => {
-		const [images, setImages] = useState<File[]>([])
-		const { mutate: mutateProducts } = useGetProducts()
+	({ className, ...props }): JSX.Element => {
+		const router = useRouter()
+		const cookies = parseCookies()
+		const companyId = cookies['@user.uid']
+		const [previewImages, setPreviewImages] = useState<File[]>([])
 
 		const form = useForm<NewProductSchemaType>({
 			resolver: zodResolver(newProductSchema),
@@ -64,43 +59,59 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 		})
 
 		const onSubmit = async (values: NewProductSchemaType) => {
-			const product = {
+			let product = {
 				...values,
 				price: values.price.replace(/\D/g, ''),
 				stock: values.stock.replace(/\D/g, '')
 			}
 
-			await api
-				.post('/products/create', product)
-				.then(() => {
-					toast.success('Produto cadastrado com sucesso!')
-					mutateProducts() // Revalidate the products list
-				})
-				.catch(error => {
-					switch (error.response.status) {
-						case 400:
-							toast.error(
-								'Erro ao cadastrar produto. Verifique os dados e tente novamente.'
-							)
-							break
-						case 401:
-							toast.error('Erro ao cadastrar produto. Você não está logado.')
-							break
-						case 500:
-							toast.error(
-								'Erro ao cadastrar produto. Tente novamente mais tarde.'
-							)
-							break
-						default:
-							toast.error(
-								'Erro ao cadastrar produto. Tente novamente mais tarde.'
-							)
-							break
-					}
-				})
+			if (previewImages.length === 0) {
+				toast.error('Por favor, adicione pelo menos uma imagem do produto.')
+				return
+			}
 
-			if (setIsOpenModal) {
-				setIsOpenModal(false)
+			try {
+				toast.promise(
+					async () => {
+						// Faça o upload das imagens para o Firebase Storage e obtenha as URLs
+						const imageUploadPromises = previewImages.map(async image => {
+							const metadata = {
+								contentType: image.type
+							}
+
+							const imageRef = ref(
+								storage,
+								`companies/${companyId}/${product.name}-${Date.now()}-${image.name}`
+							)
+
+							const snapshot = await uploadBytes(imageRef, image, metadata)
+							return await getDownloadURL(snapshot.ref)
+						})
+
+						const images = await Promise.all(imageUploadPromises)
+
+						const response = (await api
+							.post('/products/create', { ...product, images })
+							.then(res => res.data)) as { id: string }
+
+						return response
+					},
+					{
+						loading: 'Cadastrando produto...',
+						success: data => {
+							router.push(`/products/${data.id}`)
+
+							return `Produto cadastrado com sucesso!`
+						},
+						error: err => {
+							console.error(err)
+							return 'Erro ao cadastrar o produto. Tente novamente mais tarde.'
+						}
+					}
+				)
+			} catch (error) {
+				console.error(error)
+				toast.error('Erro ao cadastrar o produto. Tente novamente mais tarde.')
 			}
 		}
 
@@ -288,9 +299,12 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 						</div>
 
 						<div className='flex w-full flex-wrap gap-2'>
-							<UploadImages images={images} setImages={setImages} />
+							<UploadImages
+								images={previewImages}
+								setImages={setPreviewImages}
+							/>
 
-							{images.map((image, index) => (
+							{previewImages.map((image, index) => (
 								<div
 									key={index}
 									className='bg-muted relative flex size-33.5 items-center justify-center rounded-md border'
@@ -304,7 +318,7 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 										type='button'
 										className='bg-accent hover:bg-accent/80 absolute top-1 right-1 rounded-full p-1 transition-colors'
 										onClick={() => {
-											setImages(prevImages =>
+											setPreviewImages(prevImages =>
 												prevImages.filter((_, i) => i !== index)
 											)
 										}}

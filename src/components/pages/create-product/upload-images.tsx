@@ -159,7 +159,7 @@ const UploadImages: FC<IUploadImages> = memo(
 							onClick={handleImageUpload}
 							disabled={previewImages.length <= 0}
 						>
-							Cadastrar imagens
+							Adicionar imagens
 						</Button>
 					</DialogFooter>
 				</DialogContent>

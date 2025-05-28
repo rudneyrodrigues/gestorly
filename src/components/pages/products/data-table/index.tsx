@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import * as React from 'react'
 import {
 	ColumnDef,
@@ -12,9 +13,13 @@ import {
 	getPaginationRowModel
 } from '@tanstack/react-table'
 
+import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { DataTablePagination } from './pagination'
 import { DataTableViewOptions } from './view-options'
+import { useGetProducts } from '@/hooks/swr/use-get-products'
 import {
 	Table,
 	TableRow,
@@ -33,6 +38,8 @@ const DataTable = <TData, TValue>({
 	columns,
 	data
 }: DataTableProps<TData, TValue>) => {
+	const isMobile = useIsMobile()
+	const { loading, mutate } = useGetProducts()
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -60,6 +67,12 @@ const DataTable = <TData, TValue>({
 		}
 	})
 
+	const updateTableData = React.useCallback(async () => {
+		mutate()
+
+		toast.success('Produtos atualizados!')
+	}, [mutate])
+
 	return (
 		<div className='w-full space-y-4'>
 			<div className='flex items-center gap-2'>
@@ -73,6 +86,15 @@ const DataTable = <TData, TValue>({
 				/>
 
 				<div className='flex items-center justify-end gap-2'>
+					<Button
+						loading={loading}
+						variant='outline'
+						onClick={updateTableData}
+						size={isMobile ? 'icon' : 'default'}
+					>
+						<span>Atualizar</span>
+						{isMobile && <Icon.loading />}
+					</Button>
 					<DataTableViewOptions table={table} />
 				</div>
 			</div>
@@ -136,4 +158,3 @@ DataTable.displayName = 'DataTable'
 
 export { DataTable }
 export * from './columns'
-export * from './payments'

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { Product } from '@/types'
@@ -9,7 +10,7 @@ import { DataTableColumnHeader } from './column-header'
 import {
 	DropdownMenu,
 	DropdownMenuItem,
-	DropdownMenuLabel,
+	// DropdownMenuLabel,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 	DropdownMenuSeparator
@@ -42,7 +43,18 @@ export const columns: ColumnDef<Product>[] = [
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Produto' />
-		)
+		),
+		cell: ({ row }) => {
+			const product = row.original
+			return (
+				<Link
+					href={`/products/${product.id}`}
+					className='font-medium hover:underline hover:underline-offset-4'
+				>
+					{product.name}
+				</Link>
+			)
+		}
 	},
 	{
 		accessorKey: 'stock',
@@ -83,7 +95,7 @@ export const columns: ColumnDef<Product>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const payment = row.original
+			const product = row.original
 
 			return (
 				<div className='flex items-center justify-end'>
@@ -95,15 +107,17 @@ export const columns: ColumnDef<Product>[] = [
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end'>
-							<DropdownMenuLabel>Ações</DropdownMenuLabel>
+							{/* <DropdownMenuLabel>Ações</DropdownMenuLabel> */}
 							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(payment.id)}
+								onClick={() => navigator.clipboard.writeText(product.id)}
 							>
 								Copiar ID do produto
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-							<DropdownMenuItem>Deletar produto</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link href={`/products/${product.id}`}>Ver detalhes</Link>
+							</DropdownMenuItem>
+							{/* <DropdownMenuItem>Deletar produto</DropdownMenuItem> */}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

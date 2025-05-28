@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
 			{getLayout(<Component {...pageProps} />)}
 			<NextTopLoader showSpinner={false} />
-			<Toaster closeButton richColors position='bottom-right' />
+			<Toaster closeButton richColors position='top-right' />
 		</AuthProvider>
 	)
 }

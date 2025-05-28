@@ -28,7 +28,7 @@ const DataTableViewOptions = <TData,>({
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
-					size={isMobile ? 'icon' : 'sm'}
+					size={isMobile ? 'icon' : 'default'}
 					variant='outline'
 					className='ml-auto'
 				>

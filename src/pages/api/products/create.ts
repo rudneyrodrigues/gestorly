@@ -7,7 +7,7 @@ import { newProductSchema } from '@/utils/validations/new-product'
 
 const createProductSchema = z
 	.object({
-		images: z.array(z.string().url()).min(1, 'At least one image is required')
+		images: z.array(z.string().url())
 	})
 	.merge(newProductSchema)
 
@@ -16,7 +16,7 @@ export default async function createProduct(
 	res: NextApiResponse
 ) {
 	if (req.method === 'POST') {
-		const data = newProductSchema.parse(req.body)
+		const data = createProductSchema.parse(req.body)
 		const cookies = parseCookies({ req })
 		const userUid = cookies['@user.uid']
 
@@ -33,10 +33,10 @@ export default async function createProduct(
 		}
 
 		try {
-			await firestore.collection('products').add(product)
+			const productRef = await firestore.collection('products').add(product)
 
 			return res.status(201).json({
-				message: 'Product created successfully'
+				id: productRef.id
 			})
 		} catch (error) {
 			return res.status(500).json({ message: 'Internal Server Error' })
