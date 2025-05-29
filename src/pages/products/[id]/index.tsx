@@ -3,6 +3,7 @@ import { parseCookies } from 'nookies'
 import type { GetServerSideProps } from 'next'
 import { lazy, Suspense, type JSX, type ReactElement } from 'react'
 
+import { Icon } from '@/components/ui/icon'
 import { withSSRAuth } from '@/utils/with-ssr'
 import { firestore } from '@/lib/firebase-admin'
 import { Layout } from '@/components/pages/layout'
@@ -10,12 +11,22 @@ import { withCompany } from '@/utils/with-company'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { NextPageWithLayout, Product } from '@/types'
 
+const FormViewProduct = lazy(
+	() => import('@/components/pages/view-product/form')
+)
 const InfoSection = lazy(
 	() => import('@/components/pages/view-product/info-section')
 )
+const GallerySection = lazy(
+	() => import('@/components/pages/view-product/gallery-section')
+)
+
+type ProductWithImages = Product & {
+	images: string[]
+}
 
 interface IProductId {
-	product: Product
+	product: ProductWithImages
 }
 
 const ProductId: NextPageWithLayout<IProductId> = ({
@@ -24,7 +35,9 @@ const ProductId: NextPageWithLayout<IProductId> = ({
 	return (
 		<>
 			<Head>
-				<title>{product.name} | GestorLy - Seu gestor de empresas online</title>
+				<title>
+					Detalhes - {product.name} | GestorLy - Seu gestor de empresas online
+				</title>
 				<meta
 					property='og:title'
 					content={`${product.name} | GestorLy - Seu gestor de empresas online`}
@@ -33,16 +46,31 @@ const ProductId: NextPageWithLayout<IProductId> = ({
 			</Head>
 
 			<div className='flex flex-1 flex-col'>
-				<main className='container mx-auto flex gap-6 px-3 py-6'>
-					<div className='flex-1'>
+				<main className='container mx-auto flex flex-col gap-6 px-3 py-6 xl:flex-row'>
+					<div className='flex flex-1 flex-col gap-6'>
 						<h2 className='scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0'>
 							{product.name}
 						</h2>
+
+						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
+							<h3 className='w-full scroll-m-20 border-b pb-2 text-center text-2xl font-semibold tracking-tight'>
+								Dados do produto
+							</h3>
+
+							<Suspense fallback={<Icon.loading className='animate-spin' />}>
+								<FormViewProduct defaultValues={product} />
+							</Suspense>
+						</div>
 					</div>
 
-					<Suspense fallback={<Skeleton className='h-full w-full max-w-80' />}>
-						<InfoSection product={product} />
-					</Suspense>
+					<div className='hidden max-w-80 flex-col gap-6 xl:flex'>
+						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
+							<InfoSection product={product} />
+						</Suspense>
+						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
+							<GallerySection images={product.images} />
+						</Suspense>
+					</div>
 				</main>
 			</div>
 		</>
@@ -96,7 +124,7 @@ export const getServerSideProps: GetServerSideProps = withSSRAuth(
 			const product = {
 				id: snapshot.id,
 				...snapshot.data()
-			} as Product
+			} as ProductWithImages
 
 			return {
 				props: { product }

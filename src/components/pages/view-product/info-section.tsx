@@ -12,9 +12,11 @@ type IInfoSection = {
 
 const InfoSection: FC<IInfoSection> = memo(({ product }): JSX.Element => {
 	return (
-		<section className='bg-card hidden max-h-80 min-w-80 gap-6 rounded-md border p-4 xl:flex xl:flex-col'>
+		<section className='bg-card flex min-w-80 flex-col gap-6 rounded-md border p-4'>
 			<div className='flex flex-col gap-2'>
-				<h2>Informações</h2>
+				<h2 className='scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight'>
+					Informações
+				</h2>
 
 				<div className='flex flex-col gap-2'>
 					<p className='text-foreground flex items-center justify-between gap-1 text-sm'>
@@ -40,7 +42,9 @@ const InfoSection: FC<IInfoSection> = memo(({ product }): JSX.Element => {
 			</div>
 
 			<div className='flex flex-col gap-2'>
-				<h2>Status</h2>
+				<h2 className='scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight'>
+					Status
+				</h2>
 
 				<div className='flex flex-col gap-2'>
 					<p className='text-foreground flex items-center justify-between gap-1 text-sm'>
@@ -67,7 +71,12 @@ const InfoSection: FC<IInfoSection> = memo(({ product }): JSX.Element => {
 			</div>
 
 			<div className='mt-auto'>
-				<Button disabled rightIcon='arrowUpRight' className='w-full'>
+				<Button
+					disabled
+					variant='outline'
+					rightIcon='arrowUpRight'
+					className='w-full'
+				>
 					Visualizar produto
 				</Button>
 			</div>
