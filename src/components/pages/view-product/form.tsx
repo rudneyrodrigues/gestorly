@@ -1,14 +1,17 @@
+import { toast } from 'sonner'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { memo, type FC, type JSX, type ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
+import { api } from '@/services/api'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
 import { formatPrice, formatNumber } from '@/utils/format'
+import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
 import {
 	viewProductSchema,
 	type ViewProductSchemaType
@@ -40,6 +43,7 @@ type IFormViewProduct = {
 const FormViewProduct: FC<IFormViewProduct> = memo(
 	({ className, defaultValues, ...props }): JSX.Element => {
 		const router = useRouter()
+		const { mutate } = useGetProductById(router.query.id as string)
 
 		const form = useForm<ViewProductSchemaType>({
 			resolver: zodResolver(viewProductSchema),
@@ -57,10 +61,33 @@ const FormViewProduct: FC<IFormViewProduct> = memo(
 		const onSubmit = async (values: ViewProductSchemaType) => {
 			const { id } = defaultValues
 
-			console.log({
-				id,
-				values
-			})
+			try {
+				toast.promise(
+					async () => {
+						const response = await api.put(`/products/${id}/update`, {
+							...values
+						})
+
+						return response
+					},
+					{
+						loading: 'Atualizando produto...',
+						success: data => {
+							mutate()
+							router.reload()
+							console.log(data)
+							return 'Produto atualizado com sucesso!'
+						},
+						error: err => {
+							console.error(err)
+							return 'Erro ao atualizar o produto. Tente novamente mais tarde.'
+						}
+					}
+				)
+			} catch (error) {
+				console.error(error)
+				toast.error('Erro ao atualizar o produto. Tente novamente mais tarde.')
+			}
 		}
 
 		return (

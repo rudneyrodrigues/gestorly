@@ -1,15 +1,17 @@
 import Head from 'next/head'
-import { parseCookies } from 'nookies'
+import { useRouter } from 'next/router'
 import type { GetServerSideProps } from 'next'
 import { lazy, Suspense, type JSX, type ReactElement } from 'react'
 
 import { Icon } from '@/components/ui/icon'
 import { withSSRAuth } from '@/utils/with-ssr'
-import { firestore } from '@/lib/firebase-admin'
+import type { NextPageWithLayout } from '@/types'
 import { Layout } from '@/components/pages/layout'
 import { withCompany } from '@/utils/with-company'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { NextPageWithLayout, Product } from '@/types'
+import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
+import { FormSkeleton } from '@/components/pages/view-product/skeleton'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const FormViewProduct = lazy(
 	() => import('@/components/pages/view-product/form')
@@ -21,17 +23,75 @@ const GallerySection = lazy(
 	() => import('@/components/pages/view-product/gallery-section')
 )
 
-type ProductWithImages = Product & {
-	images: string[]
-}
+const ProductId: NextPageWithLayout = (): JSX.Element => {
+	const router = useRouter()
+	const { error, loading, product } = useGetProductById(
+		router.query.id as string
+	)
 
-interface IProductId {
-	product: ProductWithImages
-}
+	if (loading) {
+		return (
+			<>
+				<Head>
+					<title>
+						Carregando... | GestorLy - Seu gestor de empresas online
+					</title>
+					<meta
+						property='og:title'
+						content='Carregando... | GestorLy - Seu gestor de empresas online'
+						key='title'
+					/>
+				</Head>
 
-const ProductId: NextPageWithLayout<IProductId> = ({
-	product
-}): JSX.Element => {
+				<div className='flex flex-1 flex-col'>
+					<main className='container mx-auto flex flex-col gap-6 px-3 py-6 xl:flex-row'>
+						<div className='flex flex-1 flex-col gap-6'>
+							<Skeleton className='h-10 w-40' />
+
+							<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
+								<FormSkeleton />
+							</div>
+						</div>
+
+						<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
+							<Skeleton className='h-80 w-full' />
+							<Skeleton className='h-80 w-full' />
+						</div>
+					</main>
+				</div>
+			</>
+		)
+	}
+
+	if (error || !product) {
+		return (
+			<>
+				<Head>
+					<title>
+						Erro no carregamento dos dados | GestorLy - Seu gestor de empresas
+						online
+					</title>
+					<meta
+						property='og:title'
+						content='Erro no carregamento dos dados | GestorLy - Seu gestor de empresas online'
+						key='title'
+					/>
+				</Head>
+
+				<div className='flex flex-1 flex-col p-4'>
+					<Alert variant='destructive' className='mx-auto max-w-2xl'>
+						<Icon.alert />
+						<AlertTitle>Erro ao carregar os dados do produto</AlertTitle>
+						<AlertDescription>
+							Ocorreu um erro ao tentar carregar os dados do produto. Por favor,
+							tente novamente mais tarde.
+						</AlertDescription>
+					</Alert>
+				</div>
+			</>
+		)
+	}
+
 	return (
 		<>
 			<Head>
@@ -40,7 +100,7 @@ const ProductId: NextPageWithLayout<IProductId> = ({
 				</title>
 				<meta
 					property='og:title'
-					content={`${product.name} | GestorLy - Seu gestor de empresas online`}
+					content={`Detalhes - ${product.name} | GestorLy - Seu gestor de empresas online`}
 					key='title'
 				/>
 			</Head>
@@ -57,13 +117,13 @@ const ProductId: NextPageWithLayout<IProductId> = ({
 								Dados do produto
 							</h3>
 
-							<Suspense fallback={<Icon.loading className='animate-spin' />}>
+							<Suspense fallback={<FormSkeleton />}>
 								<FormViewProduct defaultValues={product} />
 							</Suspense>
 						</div>
 					</div>
 
-					<div className='hidden max-w-80 flex-col gap-6 xl:flex'>
+					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
 						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
 							<InfoSection product={product} />
 						</Suspense>
@@ -83,61 +143,9 @@ ProductId.getLayout = function getLayout(page: ReactElement) {
 export default ProductId
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(
-	withCompany(async ctx => {
-		const cookies = parseCookies(ctx)
-		const userUid = cookies['@user.uid']
-
-		if (!userUid) {
-			return {
-				redirect: {
-					destination: '/sign-in',
-					permanent: false
-				}
-			}
-		}
-
-		const { id } = ctx.query
-
-		if (!id) {
-			return {
-				redirect: {
-					destination: '/products',
-					permanent: false
-				}
-			}
-		}
-
-		try {
-			const productRef = firestore.collection('products').doc(id as string)
-
-			const snapshot = await productRef.get()
-
-			if (!snapshot.exists) {
-				return {
-					redirect: {
-						destination: '/products',
-						permanent: false
-					}
-				}
-			}
-
-			const product = {
-				id: snapshot.id,
-				...snapshot.data()
-			} as ProductWithImages
-
-			return {
-				props: { product }
-			}
-		} catch (error) {
-			console.error('Error fetching product:', error)
-
-			return {
-				redirect: {
-					destination: '/products',
-					permanent: false
-				}
-			}
+	withCompany(async () => {
+		return {
+			props: {}
 		}
 	})
 )

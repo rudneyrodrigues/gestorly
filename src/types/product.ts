@@ -7,6 +7,7 @@ export type Product = {
 	description: string
 	showInCatalog: boolean
 	highlightInCatalog: boolean
+	images: string[]
 	companyId: string
 	createdBy: string
 	createdAt: string
