@@ -1,17 +1,14 @@
 import { toast } from 'sonner'
-import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { memo, type FC, type JSX, useState, ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
-import { storage } from '@/lib/firebase'
 import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
-import { UploadImages } from './upload-images'
+import { UploadImages } from './select-images'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
@@ -41,9 +38,7 @@ type IFormNewProduct = {} & ComponentProps<'form'>
 const FormCreateProduct: FC<IFormNewProduct> = memo(
 	({ className, ...props }): JSX.Element => {
 		const router = useRouter()
-		const cookies = parseCookies()
-		const companyId = cookies['@user.uid']
-		const [previewImages, setPreviewImages] = useState<File[]>([])
+		const [selectedImages, setSelectedImages] = useState<string[]>([])
 
 		const form = useForm<NewProductSchemaType>({
 			resolver: zodResolver(newProductSchema),
@@ -65,7 +60,7 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 				stock: values.stock.replace(/\D/g, '')
 			}
 
-			if (previewImages.length === 0) {
+			if (selectedImages.length === 0) {
 				toast.error('Por favor, adicione pelo menos uma imagem do produto.')
 				return
 			}
@@ -73,25 +68,8 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 			try {
 				toast.promise(
 					async () => {
-						// Faça o upload das imagens para o Firebase Storage e obtenha as URLs
-						const imageUploadPromises = previewImages.map(async image => {
-							const metadata = {
-								contentType: image.type
-							}
-
-							const imageRef = ref(
-								storage,
-								`companies/${companyId}/${product.name}-${Date.now()}-${image.name}`
-							)
-
-							const snapshot = await uploadBytes(imageRef, image, metadata)
-							return await getDownloadURL(snapshot.ref)
-						})
-
-						const images = await Promise.all(imageUploadPromises)
-
 						const response = (await api
-							.post('/products/create', { ...product, images })
+							.post('/products/create', { ...product, images: selectedImages })
 							.then(res => res.data)) as { id: string }
 
 						return response
@@ -298,27 +276,34 @@ const FormCreateProduct: FC<IFormNewProduct> = memo(
 							/>
 						</div>
 
-						<div className='flex w-full flex-wrap gap-2'>
+						<div className='grid grid-cols-2 gap-2 rounded-md sm:grid-cols-3 md:grid-cols-4'>
 							<UploadImages
-								images={previewImages}
-								setImages={setPreviewImages}
-							/>
+								selectedImages={selectedImages}
+								setSelectedImages={setSelectedImages}
+							>
+								<div className='hover:bg-muted flex h-full min-h-[156px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed p-2'>
+									<Icon.plus />
+									<span className='text-muted-foreground text-center text-xs'>
+										Adicionar imagens
+									</span>
+								</div>
+							</UploadImages>
 
-							{previewImages.map((image, index) => (
+							{selectedImages.map((image, index) => (
 								<div
 									key={index}
-									className='bg-muted relative flex size-33.5 items-center justify-center rounded-md border'
+									className='bg-muted relative flex w-full items-center justify-center rounded-md border'
 								>
 									<img
 										alt={`Preview ${index + 1}`}
-										src={URL.createObjectURL(image)}
+										src={image}
 										className='h-full w-full rounded-md object-cover'
 									/>
 									<button
 										type='button'
 										className='bg-accent hover:bg-accent/80 absolute top-1 right-1 rounded-full p-1 transition-colors'
 										onClick={() => {
-											setPreviewImages(prevImages =>
+											setSelectedImages(prevImages =>
 												prevImages.filter((_, i) => i !== index)
 											)
 										}}
