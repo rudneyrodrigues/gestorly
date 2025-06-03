@@ -5,9 +5,9 @@ import {
 	type JSX,
 	Suspense,
 	useState,
-	ReactNode,
 	useEffect,
 	type Dispatch,
+	type ReactNode,
 	type SetStateAction
 } from 'react'
 
@@ -105,7 +105,7 @@ const UploadImages: FC<IUploadImages> = memo(
 								{option === 'upload' && <Icon.caretLeft />}
 
 								{option === 'storage'
-									? 'Enviar imagens'
+									? 'Enviar novas imagens'
 									: 'Voltar para armazenamento'}
 							</Button>
 

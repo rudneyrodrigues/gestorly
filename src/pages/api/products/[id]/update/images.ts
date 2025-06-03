@@ -3,11 +3,12 @@ import { parseCookies } from 'nookies'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { firestore } from '@/lib/firebase-admin'
-import { newProductSchema } from '@/utils/validations/new-product'
 
-const updateProductSchema = z.object({}).merge(newProductSchema)
+const updateProductImagesSchema = z.object({
+	images: z.array(z.string().url()).min(1, 'At least one image is required')
+})
 
-export default async function updateProduct(
+export default async function updateProductImages(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
@@ -23,7 +24,7 @@ export default async function updateProduct(
 	}
 
 	const { id } = req.query
-	const data = updateProductSchema.parse(req.body)
+	const data = updateProductImagesSchema.parse(req.body)
 
 	try {
 		// Update product in database

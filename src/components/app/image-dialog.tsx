@@ -1,13 +1,6 @@
-import { memo, useState, type ReactNode, type FC, type JSX } from 'react'
+import Image from 'next/image'
+import { memo, type FC, type JSX, type ReactNode } from 'react'
 
-import { cn } from '@/lib/utils'
-import {
-	Carousel,
-	CarouselItem,
-	CarouselNext,
-	CarouselContent,
-	CarouselPrevious
-} from '../ui/carousel'
 import {
 	Dialog,
 	DialogTitle,
@@ -16,18 +9,14 @@ import {
 	DialogContent,
 	DialogDescription
 } from '../ui/dialog'
-import Image from 'next/image'
 
 type IImageDialog = {
-	images: string[]
 	imageUrl: string
 	children: ReactNode
 }
 
 const ImageDialog: FC<IImageDialog> = memo(
-	({ images, imageUrl, children }): JSX.Element => {
-		const [image, setImage] = useState<string>(imageUrl)
-
+	({ imageUrl, children }): JSX.Element => {
 		return (
 			<Dialog>
 				<DialogTrigger asChild>{children}</DialogTrigger>
@@ -38,47 +27,14 @@ const ImageDialog: FC<IImageDialog> = memo(
 						<DialogDescription>Visualizar imagens do produto</DialogDescription>
 					</DialogHeader>
 
-					<div className='bg-card relative flex h-full min-h-80 w-full items-center justify-center overflow-hidden p-4'>
-						<Image
-							src={image}
-							width={250}
-							height={250}
-							quality={100}
-							alt='Imagem do produto'
-							className='aspect-square h-full w-full object-contain'
-						/>
-					</div>
-
-					<div className='flex items-center gap-2 p-4'>
-						<Carousel className='w-full'>
-							<CarouselContent>
-								{images.map((img, index) => (
-									<CarouselItem
-										key={index}
-										className='basis-1/2 md:basis-1/3 lg:basis-1/4'
-									>
-										<button
-											key={index}
-											onClick={() => setImage(img)}
-											className={cn(
-												'hover:bg-card rounded-md border p-2 transition-colors',
-												image === img && 'border-primary'
-											)}
-										>
-											<img
-												src={img}
-												alt={`Imagem ${index + 1}`}
-												className='aspect-square h-24 w-24 cursor-pointer object-cover'
-											/>
-										</button>
-									</CarouselItem>
-								))}
-							</CarouselContent>
-
-							<CarouselPrevious className='left-4' />
-							<CarouselNext className='right-4' />
-						</Carousel>
-					</div>
+					<Image
+						width={250}
+						height={250}
+						quality={100}
+						src={imageUrl}
+						alt='Imagem do produto'
+						className='h-full w-full object-cover object-center transition-transform duration-200 ease-in-out hover:scale-105'
+					/>
 				</DialogContent>
 			</Dialog>
 		)

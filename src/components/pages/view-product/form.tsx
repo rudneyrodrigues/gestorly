@@ -34,7 +34,9 @@ import {
 
 type DefaultValues = {
 	id: string
-} & ViewProductSchemaType
+	showInCatalog: boolean
+	highlightInCatalog: boolean
+} & Omit<ViewProductSchemaType, 'showInCatalog' | 'highlightInCatalog'>
 
 type IFormViewProduct = {
 	defaultValues: DefaultValues
@@ -48,13 +50,13 @@ const FormViewProduct: FC<IFormViewProduct> = memo(
 		const form = useForm<ViewProductSchemaType>({
 			resolver: zodResolver(viewProductSchema),
 			defaultValues: {
-				name: defaultValues.name || '',
-				price: formatPrice(defaultValues.price) || '',
-				stock: formatNumber(defaultValues.stock) || '',
-				category: defaultValues.category || '',
-				description: defaultValues.description || '',
-				showInCatalog: defaultValues.showInCatalog || true,
-				highlightInCatalog: defaultValues.highlightInCatalog || false
+				name: defaultValues.name,
+				price: formatPrice(defaultValues.price),
+				stock: formatNumber(defaultValues.stock),
+				category: defaultValues.category,
+				description: defaultValues.description,
+				showInCatalog: defaultValues.showInCatalog,
+				highlightInCatalog: defaultValues.highlightInCatalog
 			}
 		})
 
@@ -182,7 +184,9 @@ const FormViewProduct: FC<IFormViewProduct> = memo(
 												onValueChange={e => {
 													field.onChange(e === 'yes')
 												}}
-												defaultValue='yes'
+												defaultValue={
+													defaultValues.showInCatalog ? 'yes' : 'no'
+												}
 											>
 												<SelectTrigger className='w-full'>
 													<SelectValue placeholder='Mostrar no catálogo' />
@@ -210,7 +214,9 @@ const FormViewProduct: FC<IFormViewProduct> = memo(
 												onValueChange={e => {
 													field.onChange(e === 'yes')
 												}}
-												defaultValue='no'
+												defaultValue={
+													defaultValues.highlightInCatalog ? 'yes' : 'no'
+												}
 											>
 												<SelectTrigger className='w-full'>
 													<SelectValue placeholder='Destacar no catálogo' />

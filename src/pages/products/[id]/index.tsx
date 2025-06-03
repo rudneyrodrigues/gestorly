@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
 import { FormSkeleton } from '@/components/pages/view-product/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { GallerySectionSkeleton } from '@/components/pages/view-product/gallery-section'
 
 const FormViewProduct = lazy(
 	() => import('@/components/pages/view-product/form')
@@ -121,14 +122,21 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 								<FormViewProduct defaultValues={product} />
 							</Suspense>
 						</div>
+
+						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
+							<h3 className='w-full scroll-m-20 border-b pb-2 text-center text-2xl font-semibold tracking-tight'>
+								Imagens do produto
+							</h3>
+
+							<Suspense fallback={<GallerySectionSkeleton />}>
+								<GallerySection id={product.id} images={product.images} />
+							</Suspense>
+						</div>
 					</div>
 
 					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
 						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
 							<InfoSection product={product} />
-						</Suspense>
-						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
-							<GallerySection images={product.images} />
 						</Suspense>
 					</div>
 				</main>

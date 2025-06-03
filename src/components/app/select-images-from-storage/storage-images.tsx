@@ -37,8 +37,8 @@ const StorageImages: FC<IStorageImages> = memo(
 		}
 
 		return (
-			<ScrollArea classNameViewport='max-h-80 min-h-20'>
-				<div className='grid max-h-80 grid-cols-2 gap-2 rounded-md border border-dashed p-2 sm:grid-cols-3 md:grid-cols-4'>
+			<ScrollArea classNameViewport='max-h-80 min-h-20 border border-dashed rounded-md overflow-hidden'>
+				<div className='grid grid-cols-2 gap-2 p-2 sm:grid-cols-3 md:grid-cols-4'>
 					{images.map((image, index) => (
 						<button
 							key={index}

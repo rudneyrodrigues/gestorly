@@ -17,6 +17,7 @@ import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useGetImages } from '@/hooks/swr/use-get-images'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 type IUploadNewImages = {
 	setOption: Dispatch<SetStateAction<'upload' | 'storage'>>
@@ -114,62 +115,66 @@ const UploadNewImages: FC<IUploadNewImages> = memo(
 
 		return (
 			<div className='flex flex-col gap-4'>
-				<div
-					onDrop={handleDrop}
-					onDragOver={handleDragOver}
-					onDragLeave={handleDragLeave}
-					className={cn(
-						'hover:bg-muted flex h-20 flex-col items-center justify-center overflow-hidden rounded-md border border-dashed transition-all',
-						dragActive ? 'bg-muted/50' : ''
-					)}
-				>
-					<label
-						htmlFor='images'
-						className='text-muted-foreground inline-flex w-full flex-1 cursor-pointer flex-col items-center justify-center gap-2 text-center text-sm opacity-50 transition-opacity hover:opacity-100'
-					>
-						Clique ou arraste imagens aqui para adicionar
-					</label>
-
-					<Input
-						multiple
-						id='images'
-						type='file'
-						accept='image/*'
-						className='hidden'
-						onChange={handleFileChange}
-					/>
-				</div>
-
-				{previewImages.length > 0 && (
-					<div className='grid max-h-40 grid-cols-2 gap-2 rounded-md sm:grid-cols-3 md:grid-cols-4'>
-						{previewImages.map((image, index) => (
-							<div
-								key={index}
-								className='bg-muted relative flex w-full items-center justify-center rounded-md border'
+				<ScrollArea classNameViewport='rounded-md max-h-80 min-h-20 overflow-hidden'>
+					<div className='flex w-full flex-col gap-4'>
+						<div
+							onDrop={handleDrop}
+							onDragOver={handleDragOver}
+							onDragLeave={handleDragLeave}
+							className={cn(
+								'hover:bg-muted flex h-20 flex-col items-center justify-center overflow-hidden rounded-md border border-dashed transition-all',
+								dragActive ? 'bg-muted/50' : ''
+							)}
+						>
+							<label
+								htmlFor='images'
+								className='text-muted-foreground inline-flex w-full flex-1 cursor-pointer flex-col items-center justify-center gap-2 text-center text-sm opacity-50 transition-opacity hover:opacity-100'
 							>
-								<img
-									alt={`Preview ${index + 1}`}
-									src={URL.createObjectURL(image)}
-									className='h-full w-full rounded-md object-cover'
-								/>
-								<button
-									type='button'
-									className='bg-accent hover:bg-accent/80 absolute top-1 right-1 rounded-full p-1 transition-colors'
-									onClick={() => {
-										setPreviewImages(prevImages =>
-											prevImages.filter((_, i) => i !== index)
-										)
-									}}
-								>
-									<Icon.x
-										size={10}
-										className='text-accent-foreground hover:text-destructive transition-colors'
-									/>
-								</button>
+								Clique ou arraste imagens aqui para adicionar
+							</label>
+
+							<Input
+								multiple
+								id='images'
+								type='file'
+								accept='image/*'
+								className='hidden'
+								onChange={handleFileChange}
+							/>
+						</div>
+
+						{previewImages.length > 0 && (
+							<div className='grid grid-cols-2 gap-2 rounded-md sm:grid-cols-3 md:grid-cols-4'>
+								{previewImages.map((image, index) => (
+									<div
+										key={index}
+										className='bg-muted relative flex w-full items-center justify-center rounded-md border'
+									>
+										<img
+											alt={`Preview ${index + 1}`}
+											src={URL.createObjectURL(image)}
+											className='h-full w-full rounded-md object-cover'
+										/>
+										<button
+											type='button'
+											className='group bg-accent hover:bg-accent/80 absolute top-1 right-1 rounded-full p-1 transition-colors'
+											onClick={() => {
+												setPreviewImages(prevImages =>
+													prevImages.filter((_, i) => i !== index)
+												)
+											}}
+										>
+											<Icon.x
+												size={10}
+												className='text-accent-foreground group-hover:text-destructive transition-colors'
+											/>
+										</button>
+									</div>
+								))}
 							</div>
-						))}
+						)}
 					</div>
-				)}
+				</ScrollArea>
 
 				<Button
 					loading={loading}
