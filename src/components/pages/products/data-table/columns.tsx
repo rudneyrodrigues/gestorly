@@ -75,9 +75,49 @@ export const columns: ColumnDef<Product>[] = [
 		}
 	},
 	{
+		accessorKey: 'showInCatalog',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Mostrar no Catálogo'
+				className='block md:hidden xl:block'
+			/>
+		),
+		cell: ({ row }) => {
+			const showInCatalog = String(row.getValue('showInCatalog'))
+			const formatted = showInCatalog === 'true' ? 'Sim' : 'Não'
+
+			return (
+				<div className='block font-medium md:hidden xl:block'>{formatted}</div>
+			)
+		}
+	},
+	{
+		accessorKey: 'highlightInCatalog',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Destaque no Catálogo'
+				className='block md:hidden xl:block'
+			/>
+		),
+		cell: ({ row }) => {
+			const showInCatalog = String(row.getValue('highlightInCatalog'))
+			const formatted = showInCatalog === 'true' ? 'Sim' : 'Não'
+
+			return (
+				<div className='block font-medium md:hidden xl:block'>{formatted}</div>
+			)
+		}
+	},
+	{
 		accessorKey: 'updatedAt',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Atualizado em' />
+			<DataTableColumnHeader
+				column={column}
+				title='Atualizado em'
+				className='block md:hidden lg:block'
+			/>
 		),
 		cell: ({ row }) => {
 			const updatedAt = String(row.getValue('updatedAt'))
@@ -89,7 +129,9 @@ export const columns: ColumnDef<Product>[] = [
 				minute: '2-digit'
 			})
 
-			return <div className='font-medium'>{formatted}</div>
+			return (
+				<div className='block font-medium md:hidden lg:block'>{formatted}</div>
+			)
 		}
 	},
 	{

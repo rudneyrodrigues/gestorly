@@ -52,7 +52,9 @@ const UploadImages: FC<IUploadImages> = memo(
 					setOption('storage')
 				}}
 			>
-				<DialogTrigger asChild>{children}</DialogTrigger>
+				<DialogTrigger className='focus-visible:border-ring focus-visible:ring-ring/50 overflow-hidden rounded-md outline-none focus-visible:ring-[3px]'>
+					{children}
+				</DialogTrigger>
 
 				<DialogContent>
 					<DialogHeader>

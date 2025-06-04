@@ -74,10 +74,9 @@ const FormViewProduct: FC<IFormViewProduct> = memo(
 					},
 					{
 						loading: 'Atualizando produto...',
-						success: data => {
+						success: () => {
 							mutate()
 							router.reload()
-							console.log(data)
 							return 'Produto atualizado com sucesso!'
 						},
 						error: err => {

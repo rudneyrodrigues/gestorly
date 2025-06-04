@@ -1,13 +1,13 @@
 import Image from 'next/image'
 import { toast } from 'sonner'
-import { memo, useState, type FC, type JSX } from 'react'
+import { memo, useEffect, useState, type FC, type JSX } from 'react'
 
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
 import { Icon } from '@/components/ui/icon'
-import { ImageDialog, UploadImages } from '@/components/app'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ImageDialog, UploadImages } from '@/components/app'
 import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
 
 type IGallerySection = {
@@ -21,6 +21,9 @@ const GallerySection: FC<IGallerySection> = memo(
 		const [loading, setLoading] = useState<boolean>(false)
 		const [uploadImages, setUploadImages] = useState<string[]>(images)
 
+		const arraysAreEqual = (a: string[], b: string[]) =>
+			a.length === b.length && a.every((img, index) => img === b[index])
+
 		const handleUpdateImages = () => {
 			setLoading(true)
 
@@ -30,7 +33,7 @@ const GallerySection: FC<IGallerySection> = memo(
 
 			if (
 				uploadImages.length === images.length &&
-				uploadImages.every((img, index) => img === images[index])
+				arraysAreEqual(uploadImages, images)
 			) {
 				toast.error('Nenhuma imagem foi alterada.')
 				return
@@ -63,6 +66,12 @@ const GallerySection: FC<IGallerySection> = memo(
 			}
 		}
 
+		useEffect(() => {
+			if (images.length > 0) {
+				setUploadImages(images)
+			}
+		}, [images])
+
 		return (
 			<section className='flex flex-col gap-6'>
 				<div className='grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
@@ -70,10 +79,9 @@ const GallerySection: FC<IGallerySection> = memo(
 						selectedImages={uploadImages}
 						setSelectedImages={setUploadImages}
 					>
-						<button
-							disabled={loading}
+						<div
 							className={cn(
-								'hover:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 flex h-full min-h-[156px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed p-2 transition-all duration-200 outline-none focus-visible:ring-[3px]',
+								'hover:bg-muted flex h-full min-h-[156px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed p-2 transition-all duration-200',
 								loading && 'cursor-not-allowed opacity-50'
 							)}
 						>
@@ -81,7 +89,7 @@ const GallerySection: FC<IGallerySection> = memo(
 							<span className='text-muted-foreground text-center text-xs'>
 								Adicionar imagens
 							</span>
-						</button>
+						</div>
 					</UploadImages>
 
 					{uploadImages.length === 0 ? (
@@ -94,36 +102,34 @@ const GallerySection: FC<IGallerySection> = memo(
 						uploadImages
 							// .slice(0, 4)
 							.map((image, index) => (
-								<ImageDialog key={index} imageUrl={image}>
-									<button
-										type='button'
-										className='bg-muted/80 hover:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-md border opacity-80 transition-all duration-200 outline-none hover:opacity-100 focus-visible:ring-[3px]'
-									>
+								<div
+									key={index}
+									className='relative flex flex-1 cursor-pointer'
+								>
+									<ImageDialog imageUrl={image}>
 										<Image
 											src={image}
 											width={160}
 											height={160}
-											quality={80}
+											quality={100}
 											alt={`Imagem ${index + 1}`}
-											className='block aspect-square w-full'
+											className='block aspect-square w-full opacity-80 transition-all duration-200 hover:opacity-100'
 										/>
-
-										<button
-											type='button'
-											onClick={() => {
-												setUploadImages(prev =>
-													prev.filter((_, i) => i !== index)
-												)
-											}}
-											className='group bg-accent hover:bg-accent/80 focus-visible:border-ring focus-visible:ring-ring/50 absolute top-1 right-1 rounded-full p-1 transition-colors outline-none focus-visible:ring-[3px]'
-										>
-											<Icon.x
-												size={10}
-												className='text-accent-foreground group-hover:text-destructive transition-colors'
-											/>
-										</button>
+									</ImageDialog>
+									<button
+										onClick={() => {
+											setUploadImages(prev =>
+												prev.filter((_, i) => i !== index)
+											)
+										}}
+										className='group bg-accent hover:bg-accent/80 focus-visible:border-ring focus-visible:ring-ring/50 absolute top-1 right-1 rounded-full p-1 transition-colors outline-none focus-visible:ring-[3px]'
+									>
+										<Icon.x
+											size={10}
+											className='text-accent-foreground group-hover:text-destructive transition-colors'
+										/>
 									</button>
-								</ImageDialog>
+								</div>
 							))
 					)}
 				</div>
@@ -132,7 +138,9 @@ const GallerySection: FC<IGallerySection> = memo(
 					<Button
 						loading={loading}
 						onClick={handleUpdateImages}
-						disabled={uploadImages === images || uploadImages.length === 0}
+						disabled={
+							uploadImages.length === 0 || arraysAreEqual(uploadImages, images)
+						}
 						className='w-full sm:w-auto'
 					>
 						Atualizar imagens

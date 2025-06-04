@@ -142,7 +142,7 @@ const Product: NextPageWithLayout = (): JSX.Element => {
 						</Link>
 					</div>
 
-					<section className='w-full flex-1 rounded-md'>
+					<section className='w-full flex-1 overflow-x-auto rounded-md'>
 						<DataTable columns={columns} data={products} />
 					</section>
 				</main>

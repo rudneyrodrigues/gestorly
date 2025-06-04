@@ -28,9 +28,9 @@ const DataTableViewOptions = <TData,>({
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
-					size={isMobile ? 'icon' : 'default'}
 					variant='outline'
 					className='ml-auto'
+					size={isMobile ? 'icon' : 'default'}
 				>
 					<span className={cn('hidden', !isMobile && 'inline-flex')}>
 						Configurações
@@ -38,7 +38,7 @@ const DataTableViewOptions = <TData,>({
 					<Icon.gear />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end' className='w-[150px]'>
+			<DropdownMenuContent align='end'>
 				<DropdownMenuLabel>Alterar colunas</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				{table
@@ -51,7 +51,7 @@ const DataTableViewOptions = <TData,>({
 						return (
 							<DropdownMenuCheckboxItem
 								key={column.id}
-								className='capitalize'
+								className='truncate capitalize'
 								checked={column.getIsVisible()}
 								onCheckedChange={value => column.toggleVisibility(!!value)}
 							>

@@ -12,7 +12,7 @@ type IInfoSection = {
 
 const InfoSection: FC<IInfoSection> = memo(({ product }): JSX.Element => {
 	return (
-		<section className='bg-card flex min-w-80 flex-col gap-6 rounded-md border p-4'>
+		<section className='bg-card sticky top-18 flex min-w-80 flex-col gap-6 rounded-md border p-4'>
 			<div className='flex flex-col gap-2'>
 				<h2 className='scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight'>
 					Informações

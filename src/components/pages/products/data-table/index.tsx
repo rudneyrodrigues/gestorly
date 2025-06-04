@@ -13,6 +13,7 @@ import {
 	getPaginationRowModel
 } from '@tanstack/react-table'
 
+import { cn } from '@/lib/utils'
 import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -92,63 +93,57 @@ const DataTable = <TData, TValue>({
 						onClick={updateTableData}
 						size={isMobile ? 'icon' : 'default'}
 					>
-						<span>Atualizar</span>
+						<span className={cn('hidden', !isMobile && 'block')}>
+							Atualizar
+						</span>
 						{isMobile && <Icon.loading />}
 					</Button>
 					<DataTableViewOptions table={table} />
 				</div>
 			</div>
 
-			<div className='rounded-md border'>
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map(headerGroup => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map(header => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-													)}
-										</TableHead>
-									)
-								})}
+			<Table className='w-full overflow-x-auto'>
+				<TableHeader>
+					{table.getHeaderGroups().map(headerGroup => (
+						<TableRow key={headerGroup.id}>
+							{headerGroup.headers.map(header => {
+								return (
+									<TableHead key={header.id}>
+										{header.isPlaceholder
+											? null
+											: flexRender(
+													header.column.columnDef.header,
+													header.getContext()
+												)}
+									</TableHead>
+								)
+							})}
+						</TableRow>
+					))}
+				</TableHeader>
+				<TableBody>
+					{table.getRowModel().rows?.length ? (
+						table.getRowModel().rows.map(row => (
+							<TableRow
+								key={row.id}
+								data-state={row.getIsSelected() && 'selected'}
+							>
+								{row.getVisibleCells().map(cell => (
+									<TableCell key={cell.id}>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</TableCell>
+								))}
 							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map(row => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && 'selected'}
-								>
-									{row.getVisibleCells().map(cell => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className='h-24 text-center'
-								>
-									Nenhum produto encontrado.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
+						))
+					) : (
+						<TableRow>
+							<TableCell colSpan={columns.length} className='h-24 text-center'>
+								Nenhum produto encontrado.
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
 
 			<DataTablePagination table={table} />
 		</div>
