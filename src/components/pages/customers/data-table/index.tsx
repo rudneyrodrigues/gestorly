@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { DataTablePagination } from './pagination'
 import { DataTableViewOptions } from './view-options'
-import { useGetProducts } from '@/hooks/swr/use-get-products'
 import {
 	Table,
 	TableRow,
@@ -40,7 +39,6 @@ const DataTable = <TData, TValue>({
 	data
 }: DataTableProps<TData, TValue>) => {
 	const isMobile = useIsMobile()
-	const { loading, mutate } = useGetProducts()
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,16 +67,16 @@ const DataTable = <TData, TValue>({
 	})
 
 	const updateTableData = React.useCallback(async () => {
-		mutate()
+		// mutate()
 
-		toast.success('Produtos atualizados!')
-	}, [mutate])
+		toast.success('Dados atualizados com sucesso!')
+	}, [])
 
 	return (
 		<div className='w-full space-y-4'>
 			<div className='flex items-center gap-2 p-2'>
 				<Input
-					placeholder='Filtrar produtos pelo nome...'
+					placeholder='Filtrar clientes pelo nome...'
 					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 					onChange={event =>
 						table.getColumn('name')?.setFilterValue(event.target.value)
@@ -88,7 +86,7 @@ const DataTable = <TData, TValue>({
 
 				<div className='flex items-center justify-end gap-2'>
 					<Button
-						loading={loading}
+						// loading={loading}
 						variant='outline'
 						onClick={updateTableData}
 						size={isMobile ? 'icon' : 'default'}
@@ -138,7 +136,7 @@ const DataTable = <TData, TValue>({
 					) : (
 						<TableRow>
 							<TableCell colSpan={columns.length} className='h-24 text-center'>
-								Nenhum produto encontrado.
+								Nenhum dado encontrado.
 							</TableCell>
 						</TableRow>
 					)}
@@ -153,3 +151,4 @@ DataTable.displayName = 'DataTable'
 
 export { DataTable }
 export * from './columns'
+export * from './customers'
