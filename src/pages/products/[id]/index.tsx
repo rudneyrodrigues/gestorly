@@ -13,6 +13,12 @@ import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
 import { FormSkeleton } from '@/components/pages/view-product/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { GallerySectionSkeleton } from '@/components/pages/view-product/gallery-section'
+import { Button } from '@/components/ui/button'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger
+} from '@/components/ui/popover'
 
 const FormViewProduct = lazy(
 	() => import('@/components/pages/view-product/form')
@@ -109,9 +115,27 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 			<div className='flex flex-1 flex-col'>
 				<main className='container mx-auto flex flex-col gap-6 px-3 py-6 xl:flex-row'>
 					<div className='flex flex-1 flex-col gap-6'>
-						<h2 className='scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0'>
-							{product.name}
-						</h2>
+						<div className='flex items-center justify-between gap-2'>
+							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 md:text-3xl'>
+								{product.name}
+							</h2>
+
+							<div className='ml-auto flex xl:hidden'>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button size='icon' variant='outline'>
+											<Icon.info />
+										</Button>
+									</PopoverTrigger>
+
+									<PopoverContent align='end' className='w-80 border-none p-0'>
+										<Suspense fallback={<Skeleton className='h-80 w-full' />}>
+											<InfoSection product={product} />
+										</Suspense>
+									</PopoverContent>
+								</Popover>
+							</div>
+						</div>
 
 						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
 							<h3 className='w-full scroll-m-20 border-b pb-2 text-center text-2xl font-semibold tracking-tight'>

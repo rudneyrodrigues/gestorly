@@ -1,6 +1,7 @@
 import {
 	XIcon,
 	SunIcon,
+	InfoIcon,
 	MoonIcon,
 	PlusIcon,
 	LockIcon,
@@ -37,6 +38,7 @@ import {
 export const Icon = {
 	x: XIcon,
 	sun: SunIcon,
+	info: InfoIcon,
 	moon: MoonIcon,
 	plus: PlusIcon,
 	lock: LockIcon,

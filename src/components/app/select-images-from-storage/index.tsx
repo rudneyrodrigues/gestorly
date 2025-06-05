@@ -41,6 +41,7 @@ const UploadImages: FC<IUploadImages> = memo(
 		useEffect(() => {
 			if (open) {
 				setPreviewImages(selectedImages)
+				setOption('storage')
 			}
 		}, [open, selectedImages])
 
@@ -49,7 +50,6 @@ const UploadImages: FC<IUploadImages> = memo(
 				open={open}
 				onOpenChange={() => {
 					setOpen(!open)
-					setOption('storage')
 				}}
 			>
 				<DialogTrigger className='focus-visible:border-ring focus-visible:ring-ring/50 overflow-hidden rounded-md outline-none focus-visible:ring-[3px]'>

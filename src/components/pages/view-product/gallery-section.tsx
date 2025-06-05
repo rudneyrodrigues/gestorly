@@ -104,7 +104,7 @@ const GallerySection: FC<IGallerySection> = memo(
 							.map((image, index) => (
 								<div
 									key={index}
-									className='relative flex flex-1 cursor-pointer'
+									className='relative flex flex-1 cursor-pointer overflow-hidden rounded-md border'
 								>
 									<ImageDialog imageUrl={image}>
 										<Image

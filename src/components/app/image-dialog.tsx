@@ -18,7 +18,7 @@ const ImageDialog: FC<IImageDialog> = memo(
 	({ imageUrl, children }): JSX.Element => {
 		return (
 			<Dialog>
-				<DialogTrigger className='focus-visible:border-ring focus-visible:ring-ring/50 flex overflow-hidden rounded-md outline-none focus-visible:ring-[3px]'>
+				<DialogTrigger className='focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center justify-center overflow-hidden outline-none focus-visible:ring-[3px]'>
 					{children}
 				</DialogTrigger>
 
