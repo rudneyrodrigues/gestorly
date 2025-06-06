@@ -2,28 +2,27 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { memo, type FC, type JSX, useState, ComponentProps } from 'react'
+import {
+	memo,
+	lazy,
+	type FC,
+	type JSX,
+	useState,
+	Suspense,
+	type ComponentProps
+} from 'react'
 
 import { cn } from '@/lib/utils'
 import { api } from '@/services/api'
-import { Icon } from '@/components/ui/icon'
 import { Input } from '@/components/ui/input'
-import { UploadImages } from '@/components/app'
 import { Button } from '@/components/ui/button'
-import { categories } from '@/utils/categories'
-import { Textarea } from '@/components/ui/textarea'
+import { Skeleton } from '@/components/ui/skeleton'
+import { uploadAvatar } from '@/actions/upload-avatar'
 import { formatPhone, formatCpfOrCnpj } from '@/utils/format'
 import {
 	newCustomerSchema,
 	type NewCustomerSchemaType
 } from '@/utils/validations/new-customer'
-import {
-	Select,
-	SelectItem,
-	SelectValue,
-	SelectTrigger,
-	SelectContent
-} from '@/components/ui/select'
 import {
 	Form,
 	FormItem,
@@ -33,12 +32,15 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 
+const UploadAvatar = lazy(() => import('./upload-avatar'))
+
 type IFormNewCustomer = {} & ComponentProps<'form'>
 
 const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 	({ className, ...props }): JSX.Element => {
 		const router = useRouter()
-		const [avatar, setAvatar] = useState<string | null>(null)
+		const [avatar, setAvatar] = useState<File>()
+		const [loading, setLoading] = useState<boolean>(false)
 
 		const form = useForm<NewCustomerSchemaType>({
 			resolver: zodResolver(newCustomerSchema),
@@ -51,7 +53,42 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 		})
 
 		const onSubmit = async (values: NewCustomerSchemaType) => {
-			console.log('values', values)
+			setLoading(true)
+
+			toast.promise(
+				async () => {
+					let avatarUrl: string | undefined = undefined
+
+					if (avatar) {
+						avatarUrl = await uploadAvatar({
+							email: values.email,
+							avatarFile: avatar
+						})
+					}
+
+					const response = await api
+						.post('/customers/create', {
+							...values,
+							avatar: avatarUrl
+						})
+						.then(res => res.data)
+
+					return response as { id: string }
+				},
+				{
+					loading: 'Cadastrando cliente...',
+					success: data => {
+						console.log('Cliente cadastrado com sucesso:', data.id)
+						router.push('/customers')
+
+						return 'Cliente cadastrado com sucesso!'
+					},
+					error: 'Erro ao cadastrar cliente',
+					finally: () => {
+						setLoading(false)
+					}
+				}
+			)
 		}
 
 		return (
@@ -62,13 +99,18 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 					{...props}
 				>
 					<div>
-						<div className='mx-auto size-40 rounded-md border p-4' />
+						<div className='mx-auto flex size-40 overflow-hidden rounded-md border border-dashed'>
+							<Suspense fallback={<Skeleton className='h-full w-full' />}>
+								<UploadAvatar setAvatar={setAvatar} />
+							</Suspense>
+						</div>
 					</div>
 
 					<div className='flex flex-col gap-4'>
 						<div className='grid grid-cols-1 items-start gap-4 sm:grid-cols-2'>
 							<FormField
 								name='name'
+								disabled={loading}
 								control={form.control}
 								render={({ field }) => (
 									<FormItem>
@@ -87,6 +129,7 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 
 							<FormField
 								name='email'
+								disabled={loading}
 								control={form.control}
 								render={({ field }) => (
 									<FormItem>
@@ -107,6 +150,7 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 						<div className='grid grid-cols-1 items-start gap-4 sm:grid-cols-2'>
 							<FormField
 								name='phone'
+								disabled={loading}
 								control={form.control}
 								render={({ field }) => {
 									const formatUserPhone = (value: string) => {
@@ -143,6 +187,7 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 							/>
 							<FormField
 								name='cpf_or_cnpj'
+								disabled={loading}
 								control={form.control}
 								render={({ field }) => {
 									const formatUserCpfOrCnpj = (value: string) => {
@@ -182,8 +227,11 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 
 					<Button
 						type='submit'
-						loading={form.formState.isSubmitting}
-						disabled={!form.formState.isValid || form.formState.isSubmitting}
+						loadingText='Cadastrando...'
+						loading={form.formState.isSubmitting || loading}
+						disabled={
+							!form.formState.isValid || form.formState.isSubmitting || loading
+						}
 						className='sm:ml-auto'
 					>
 						Cadastrar

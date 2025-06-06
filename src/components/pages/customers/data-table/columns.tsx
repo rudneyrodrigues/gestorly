@@ -7,6 +7,9 @@ import { formatPhone, formatCpfOrCnpj } from '@/utils/format'
 // import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './column-header'
+import { ImageDialog } from '@/components/app'
+import Image from 'next/image'
+import { Icon } from '@/components/ui/icon'
 // import {
 // 	DropdownMenu,
 // 	DropdownMenuItem,
@@ -38,6 +41,38 @@ export const columns: ColumnDef<Customer>[] = [
 		),
 		enableSorting: false,
 		enableHiding: false
+	},
+	{
+		accessorKey: 'avatar',
+		header: () => <span>Avatar</span>,
+		cell: ({ row }) => {
+			const customer = row.original
+
+			if (!customer.avatar) {
+				return (
+					<div className='bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full'>
+						<Icon.user className='text-muted-foreground size-4' />
+					</div>
+				)
+			}
+
+			return (
+				<ImageDialog
+					className='size-8 cursor-pointer rounded-full'
+					imageUrl={customer.avatar}
+				>
+					<Image
+						width={32}
+						height={32}
+						loading='lazy'
+						quality={100}
+						src={customer.avatar}
+						alt={`Avatar de ${customer.name}`}
+						className='h-full w-full'
+					/>
+				</ImageDialog>
+			)
+		}
 	},
 	{
 		accessorKey: 'name',

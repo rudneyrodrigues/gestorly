@@ -15,6 +15,7 @@ function createRandomCustomer(): Customer {
 			allowSpecialCharacters: false,
 			provider: 'example.com'
 		}),
+		avatar: faker.image.avatar(),
 		phone: faker.phone.number(),
 		cpf_or_cnpj: faker.string.numeric({ length: 11 }) // Assuming CPF for simplicity
 	}

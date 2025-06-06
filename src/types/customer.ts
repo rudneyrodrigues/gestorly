@@ -3,5 +3,6 @@ export type Customer = {
 	name: string
 	email: string
 	phone: string
+	avatar?: string
 	cpf_or_cnpj: string
 }

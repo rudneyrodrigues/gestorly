@@ -1,5 +1,6 @@
-import { memo, type FC, type JSX, type ReactNode } from 'react'
+import { ComponentProps, memo, type FC, type JSX, type ReactNode } from 'react'
 
+import { cn } from '@/lib/utils'
 import {
 	Dialog,
 	DialogTitle,
@@ -12,20 +13,26 @@ import {
 type IImageDialog = {
 	imageUrl: string
 	children: ReactNode
-}
+} & ComponentProps<typeof DialogTrigger>
 
 const ImageDialog: FC<IImageDialog> = memo(
-	({ imageUrl, children }): JSX.Element => {
+	({ imageUrl, children, className, ...props }): JSX.Element => {
 		return (
 			<Dialog>
-				<DialogTrigger className='focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center justify-center overflow-hidden outline-none focus-visible:ring-[3px]'>
+				<DialogTrigger
+					className={cn(
+						'focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center justify-center overflow-hidden outline-none focus-visible:ring-[3px]',
+						className
+					)}
+					{...props}
+				>
 					{children}
 				</DialogTrigger>
 
 				<DialogContent className='max-h-[90vh] min-h-40 !w-[90vw] max-w-7xl overflow-hidden border p-0'>
 					<DialogHeader className='sr-only'>
 						<DialogTitle>Visualizar Imagens</DialogTitle>
-						<DialogDescription>Visualizar imagens do produto</DialogDescription>
+						<DialogDescription>Visualizar imagens</DialogDescription>
 					</DialogHeader>
 
 					<img
