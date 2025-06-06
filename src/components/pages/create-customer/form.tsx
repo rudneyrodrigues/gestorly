@@ -12,7 +12,7 @@ import { UploadImages } from '@/components/app'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/utils/categories'
 import { Textarea } from '@/components/ui/textarea'
-import { formatNumber, formatCpfOrCnpj } from '@/utils/format'
+import { formatPhone, formatCpfOrCnpj } from '@/utils/format'
 import {
 	newCustomerSchema,
 	type NewCustomerSchemaType
@@ -46,8 +46,7 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 				name: '',
 				email: '',
 				phone: '',
-				cpf_or_cnpj: '',
-				avatar: ''
+				cpf_or_cnpj: ''
 			}
 		})
 
@@ -62,6 +61,10 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 					className={cn('flex flex-col gap-6', className)}
 					{...props}
 				>
+					<div>
+						<div className='mx-auto size-40 rounded-md border p-4' />
+					</div>
+
 					<div className='flex flex-col gap-4'>
 						<div className='grid grid-cols-1 items-start gap-4 sm:grid-cols-2'>
 							<FormField
@@ -106,14 +109,67 @@ const FormCreateCustomer: FC<IFormNewCustomer> = memo(
 								name='phone'
 								control={form.control}
 								render={({ field }) => {
+									const formatUserPhone = (value: string) => {
+										return formatPhone(value)
+									}
+
+									const handlePhoneChange = (
+										e: React.ChangeEvent<HTMLInputElement>
+									) => {
+										const formattedValue = formatUserPhone(e.target.value)
+										field.onChange(formattedValue)
+									}
+
 									return (
 										<FormItem>
 											<FormLabel>Telefone</FormLabel>
 											<FormControl>
 												<Input
 													type='text'
+													maxLength={15}
+													ref={field.ref}
+													name={field.name}
+													value={field.value}
+													onBlur={field.onBlur}
+													disabled={field.disabled}
 													placeholder='(11) 91234-5678'
-													{...field}
+													onChange={handlePhoneChange}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)
+								}}
+							/>
+							<FormField
+								name='cpf_or_cnpj'
+								control={form.control}
+								render={({ field }) => {
+									const formatUserCpfOrCnpj = (value: string) => {
+										return formatCpfOrCnpj(value)
+									}
+
+									const handleCpfOrCnpjChange = (
+										e: React.ChangeEvent<HTMLInputElement>
+									) => {
+										const formattedValue = formatUserCpfOrCnpj(e.target.value)
+										field.onChange(formattedValue)
+									}
+
+									return (
+										<FormItem>
+											<FormLabel>CPF ou CNPJ</FormLabel>
+											<FormControl>
+												<Input
+													type='text'
+													maxLength={18}
+													ref={field.ref}
+													name={field.name}
+													value={field.value}
+													onBlur={field.onBlur}
+													disabled={field.disabled}
+													onChange={handleCpfOrCnpjChange}
+													placeholder='000.000.000-00 ou 00.000.000/0000-00'
 												/>
 											</FormControl>
 											<FormMessage />

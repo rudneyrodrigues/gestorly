@@ -25,12 +25,7 @@ export const newCustomerSchema = z.object({
 		.transform(value => value.replace(/\D/g, ''))
 		.refine(value => value.length === 11 || value.length === 14, {
 			message: 'Informe um CPF ou CNPJ válido.'
-		}),
-	avatar: z
-		.string()
-		.url('URL inválida')
-		.optional()
-		.transform(value => (value ? value.trim() : value))
+		})
 })
 
 export type NewCustomerSchemaType = z.infer<typeof newCustomerSchema>
