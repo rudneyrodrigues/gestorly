@@ -1,14 +1,21 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import type { GetServerSideProps } from 'next'
 import type { JSX, ReactElement } from 'react'
 
+import { cn } from '@/lib/utils'
+import { Icon } from '@/components/ui/icon'
 import { withSSRAuth } from '@/utils/with-ssr'
+import { Button } from '@/components/ui/button'
+import { useIsMobile } from '@/hooks/use-mobile'
 import type { NextPageWithLayout } from '@/types'
 import { Layout } from '@/components/pages/layout'
 import { withCompany } from '@/utils/with-company'
 import { columns, customers, DataTable } from '@/components/pages/customers'
 
 const Customers: NextPageWithLayout = (): JSX.Element => {
+	const isMobile = useIsMobile()
+
 	return (
 		<>
 			<Head>
@@ -26,6 +33,19 @@ const Customers: NextPageWithLayout = (): JSX.Element => {
 						<h2 className='scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0'>
 							Clientes
 						</h2>
+
+						<Link href='customers/create' passHref>
+							<Button
+								variant='secondary'
+								size={isMobile ? 'icon' : 'default'}
+								className='cursor-pointer'
+							>
+								<span className={cn('hidden', !isMobile && 'inline-flex')}>
+									Adicionar cliente
+								</span>
+								<Icon.plus />
+							</Button>
+						</Link>
 					</div>
 
 					<section className='w-full flex-1 overflow-x-auto rounded-md'>

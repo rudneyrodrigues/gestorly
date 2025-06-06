@@ -6,23 +6,23 @@ import { withSSRAuth } from '@/utils/with-ssr'
 import type { NextPageWithLayout } from '@/types'
 import { withCompany } from '@/utils/with-company'
 import { Layout } from '@/components/pages/layout'
-import { FormCreateProductSkeleton } from '@/components/pages/create-product'
+import { FormCreateCustomerSkeleton } from '@/components/pages/create-customer'
 
-const FormCreateProduct = lazy(
-	() => import('@/components/pages/create-product/form')
+const FormCreateCustomer = lazy(
+	() => import('@/components/pages/create-customer/form')
 )
 
-const CreateProduct: NextPageWithLayout = (): JSX.Element => {
+const CreateCustomer: NextPageWithLayout = (): JSX.Element => {
 	return (
 		<>
 			<Head>
 				<title>
-					Cadastrar produto | GestorLy - Seu gestor de empresas online
+					Cadastrar cliente | GestorLy - Seu gestor de empresas online
 				</title>
 				<meta
 					key='title'
 					property='og:title'
-					content='Cadastrar produto | GestorLy - Seu gestor de empresas online'
+					content='Cadastrar cliente | GestorLy - Seu gestor de empresas online'
 				/>
 			</Head>
 
@@ -30,13 +30,13 @@ const CreateProduct: NextPageWithLayout = (): JSX.Element => {
 				<main className='mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-3 py-6'>
 					<div className='flex items-center justify-between gap-2 rounded-md'>
 						<h2 className='scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0'>
-							Cadastrar produto
+							Cadastrar cliente
 						</h2>
 					</div>
 
 					<section className='w-full flex-1 rounded-md'>
-						<Suspense fallback={<FormCreateProductSkeleton />}>
-							<FormCreateProduct />
+						<Suspense fallback={<FormCreateCustomerSkeleton />}>
+							<FormCreateCustomer />
 						</Suspense>
 					</section>
 				</main>
@@ -44,11 +44,11 @@ const CreateProduct: NextPageWithLayout = (): JSX.Element => {
 		</>
 	)
 }
-CreateProduct.getLayout = function getLayout(page: ReactElement) {
+CreateCustomer.getLayout = function getLayout(page: ReactElement) {
 	return <Layout>{page}</Layout>
 }
 
-export default CreateProduct
+export default CreateCustomer
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(
 	withCompany(async () => {
