@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Product } from '@/types'
 import { firestore } from '@/lib/firebase-admin'
 
-export default async function createCompany(
+export default async function getProducts(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {

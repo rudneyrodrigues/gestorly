@@ -38,9 +38,15 @@ export default async function createCustomer(
 		}
 
 		const validatedData = createCustomerSchema.parse(req.body)
+		const customerData = {
+			...validatedData,
+			companyId: userUid,
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		}
 
 		const customerRef = firestore.collection('customers').doc()
-		await customerRef.set(validatedData)
+		await customerRef.set(customerData)
 
 		return res.status(201).json({ id: customerRef.id })
 	} catch (error) {

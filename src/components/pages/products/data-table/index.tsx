@@ -69,7 +69,7 @@ const DataTable = <TData, TValue>({
 	})
 
 	const updateTableData = React.useCallback(async () => {
-		mutate()
+		await mutate()
 
 		toast.success('Produtos atualizados!')
 	}, [mutate])

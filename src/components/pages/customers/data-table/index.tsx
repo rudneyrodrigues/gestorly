@@ -28,6 +28,7 @@ import {
 	TableHead,
 	TableHeader
 } from '@/components/ui/table'
+import { useGetCustomers } from '@/hooks/swr/use-get-customers'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -39,6 +40,7 @@ const DataTable = <TData, TValue>({
 	data
 }: DataTableProps<TData, TValue>) => {
 	const isMobile = useIsMobile()
+	const { loading, mutate } = useGetCustomers()
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -67,7 +69,7 @@ const DataTable = <TData, TValue>({
 	})
 
 	const updateTableData = React.useCallback(async () => {
-		// mutate()
+		await mutate()
 
 		toast.success('Dados atualizados com sucesso!')
 	}, [])
@@ -86,7 +88,7 @@ const DataTable = <TData, TValue>({
 
 				<div className='flex items-center justify-end gap-2'>
 					<Button
-						// loading={loading}
+						loading={loading}
 						variant='outline'
 						onClick={updateTableData}
 						size={isMobile ? 'icon' : 'default'}

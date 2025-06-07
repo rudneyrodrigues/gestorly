@@ -5,4 +5,7 @@ export type Customer = {
 	phone: string
 	avatar?: string
 	cpf_or_cnpj: string
+	companyId: string
+	createdAt: string
+	updatedAt: string
 }
