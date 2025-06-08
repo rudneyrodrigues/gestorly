@@ -1,22 +1,22 @@
-// import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { Customer } from '@/types'
 import { Icon } from '@/components/ui/icon'
 import { ImageDialog } from '@/components/app'
-// import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './column-header'
 import { formatPhone, formatCpfOrCnpj } from '@/utils/format'
-// import {
-// 	DropdownMenu,
-// 	DropdownMenuItem,
-// 	// DropdownMenuLabel,
-// 	DropdownMenuContent,
-// 	DropdownMenuTrigger,
-// 	DropdownMenuSeparator
-// } from '@/components/ui/dropdown-menu'
+import {
+	DropdownMenu,
+	DropdownMenuItem,
+	// DropdownMenuLabel,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+	DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu'
 
 export const columns: ColumnDef<Customer>[] = [
 	{
@@ -82,9 +82,12 @@ export const columns: ColumnDef<Customer>[] = [
 			const customer = row.original
 
 			return (
-				<span suppressHydrationWarning className='truncate'>
+				<Link
+					href={`/customers/${customer.id}`}
+					className='font-medium hover:underline hover:underline-offset-4'
+				>
 					{customer.name}
-				</span>
+				</Link>
 			)
 		}
 	},
@@ -96,11 +99,7 @@ export const columns: ColumnDef<Customer>[] = [
 		cell: ({ row }) => {
 			const customer = row.original
 
-			return (
-				<span suppressHydrationWarning className='truncate'>
-					{customer.email}
-				</span>
-			)
+			return <span className='truncate'>{customer.email}</span>
 		}
 	},
 	{
@@ -116,7 +115,7 @@ export const columns: ColumnDef<Customer>[] = [
 			const customer = row.original
 
 			return (
-				<span suppressHydrationWarning className='truncate md:hidden xl:block'>
+				<span className='truncate md:hidden xl:block'>
 					{formatPhone(String(customer.phone))}
 				</span>
 			)
@@ -138,6 +137,38 @@ export const columns: ColumnDef<Customer>[] = [
 				<span suppressHydrationWarning className='truncate md:hidden xl:block'>
 					{formatCpfOrCnpj(String(customer.cpf_or_cnpj))}
 				</span>
+			)
+		}
+	},
+	{
+		id: 'actions',
+		cell: ({ row }) => {
+			const customer = row.original
+
+			return (
+				<div className='flex items-center justify-end'>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant='ghost' className='size-8 p-0'>
+								<span className='sr-only'>Abrir menu</span>
+								<Icon.more size={4} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align='end'>
+							{/* <DropdownMenuLabel>Ações</DropdownMenuLabel> */}
+							<DropdownMenuItem
+								onClick={() => navigator.clipboard.writeText(customer.id)}
+							>
+								Copiar ID do cliente
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem asChild>
+								<Link href={`/customers/${customer.id}`}>Ver detalhes</Link>
+							</DropdownMenuItem>
+							{/* <DropdownMenuItem>Deletar cliente</DropdownMenuItem> */}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 			)
 		}
 	}

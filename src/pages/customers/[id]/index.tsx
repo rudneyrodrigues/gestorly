@@ -1,38 +1,22 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
+import type { JSX, ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
-import { lazy, Suspense, type JSX, type ReactElement } from 'react'
 
 import { Icon } from '@/components/ui/icon'
+import { ImageDialog } from '@/components/app'
 import { withSSRAuth } from '@/utils/with-ssr'
-import { Button } from '@/components/ui/button'
 import type { NextPageWithLayout } from '@/types'
 import { Layout } from '@/components/pages/layout'
 import { withCompany } from '@/utils/with-company'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetProductById } from '@/hooks/swr/use-get-product-by-id'
-import { FormSkeleton } from '@/components/pages/view-product/skeleton'
+import { useGetCustomerById } from '@/hooks/swr/use-get-customer-by-id'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
-import { GallerySectionSkeleton } from '@/components/pages/view-product/gallery-section'
 
-const FormViewProduct = lazy(
-	() => import('@/components/pages/view-product/form')
-)
-const InfoSection = lazy(
-	() => import('@/components/pages/view-product/info-section')
-)
-const GallerySection = lazy(
-	() => import('@/components/pages/view-product/gallery-section')
-)
-
-const ProductId: NextPageWithLayout = (): JSX.Element => {
+const CustomerId: NextPageWithLayout = (): JSX.Element => {
 	const router = useRouter()
-	const { error, loading, product } = useGetProductById(
+	const { error, loading, customer } = useGetCustomerById(
 		router.query.id as string
 	)
 
@@ -53,15 +37,14 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 				<div className='flex flex-1 flex-col'>
 					<main className='container mx-auto flex flex-col gap-6 px-3 py-6 xl:flex-row'>
 						<div className='flex flex-1 flex-col gap-6'>
-							<Skeleton className='h-10 w-40' />
+							<Skeleton className='h-10 w-96' />
 
 							<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
-								<FormSkeleton />
+								{/* <FormSkeleton /> */}
 							</div>
 						</div>
 
 						<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
-							<Skeleton className='h-80 w-full' />
 							<Skeleton className='h-80 w-full' />
 						</div>
 					</main>
@@ -70,7 +53,7 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 		)
 	}
 
-	if (error || !product) {
+	if (error || !customer) {
 		return (
 			<>
 				<Head>
@@ -88,9 +71,9 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 				<div className='flex flex-1 flex-col p-4'>
 					<Alert variant='destructive' className='mx-auto max-w-2xl'>
 						<Icon.alert />
-						<AlertTitle>Erro ao carregar os dados do produto</AlertTitle>
+						<AlertTitle>Erro ao carregar os dados do cliente</AlertTitle>
 						<AlertDescription>
-							Ocorreu um erro ao tentar carregar os dados do produto. Por favor,
+							Ocorreu um erro ao tentar carregar os dados do cliente. Por favor,
 							tente novamente mais tarde.
 						</AlertDescription>
 					</Alert>
@@ -103,11 +86,11 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 		<>
 			<Head>
 				<title>
-					Detalhes - {product.name} | GestorLy - Seu gestor de empresas online
+					Detalhes - {customer.name} | GestorLy - Seu gestor de empresas online
 				</title>
 				<meta
 					property='og:title'
-					content={`Detalhes - ${product.name} | GestorLy - Seu gestor de empresas online`}
+					content={`Detalhes - ${customer.name} | GestorLy - Seu gestor de empresas online`}
 					key='title'
 				/>
 			</Head>
@@ -115,64 +98,43 @@ const ProductId: NextPageWithLayout = (): JSX.Element => {
 			<div className='flex flex-1 flex-col'>
 				<main className='container mx-auto flex flex-col gap-6 px-3 py-6 xl:flex-row'>
 					<div className='flex flex-1 flex-col gap-6'>
-						<div className='flex items-center justify-between gap-2'>
+						<div className='flex items-center gap-2'>
+							<ImageDialog
+								className='size-10 cursor-pointer rounded-full opacity-80 hover:opacity-100'
+								imageUrl={customer.avatar || '/images/avatar-placeholder.png'}
+							>
+								<Image
+									width={40}
+									height={40}
+									alt={`Avatar de ${customer.name}`}
+									src={customer.avatar || '/images/avatar-placeholder.png'}
+									className='size-10 rounded-full'
+								/>
+							</ImageDialog>
+
 							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 md:text-3xl'>
-								{product.name}
+								{customer.name}
 							</h2>
-
-							<div className='ml-auto flex xl:hidden'>
-								<Popover>
-									<PopoverTrigger asChild>
-										<Button size='icon' variant='outline'>
-											<Icon.info />
-										</Button>
-									</PopoverTrigger>
-
-									<PopoverContent align='end' className='w-80 border-none p-0'>
-										<Suspense fallback={<Skeleton className='h-80 w-full' />}>
-											<InfoSection product={product} />
-										</Suspense>
-									</PopoverContent>
-								</Popover>
-							</div>
 						</div>
 
 						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
 							<h3 className='w-full scroll-m-20 border-b pb-2 text-center text-2xl font-semibold tracking-tight'>
-								Dados do produto
+								Histórico de Compras
 							</h3>
-
-							<Suspense fallback={<FormSkeleton />}>
-								<FormViewProduct defaultValues={product} />
-							</Suspense>
-						</div>
-
-						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
-							<h3 className='w-full scroll-m-20 border-b pb-2 text-center text-2xl font-semibold tracking-tight'>
-								Imagens do produto
-							</h3>
-
-							<Suspense fallback={<GallerySectionSkeleton />}>
-								<GallerySection id={product.id} images={product.images} />
-							</Suspense>
 						</div>
 					</div>
 
-					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
-						<Suspense fallback={<Skeleton className='h-80 w-full max-w-80' />}>
-							<InfoSection product={product} />
-						</Suspense>
-					</div>
+					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'></div>
 				</main>
 			</div>
 		</>
 	)
 }
-ProductId.getLayout = function getLayout(page: ReactElement) {
+CustomerId.getLayout = function getLayout(page: ReactElement) {
 	return <Layout>{page}</Layout>
 }
 
-export default ProductId
+export default CustomerId
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(
 	withCompany(async () => {
