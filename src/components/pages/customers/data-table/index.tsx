@@ -153,4 +153,3 @@ DataTable.displayName = 'DataTable'
 
 export { DataTable }
 export * from './columns'
-export * from './customers'
