@@ -11,16 +11,28 @@ import {
 } from '@/components/ui/tooltip'
 
 type IButtonClipboard = {
-	id: string
+	copy: string
+	name?: string
+	showTooltip?: boolean
+	tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
 } & ComponentProps<typeof Button>
 
 const ButtonClipboard: FC<IButtonClipboard> = memo(
-	({ id, className, ...props }): JSX.Element => {
+	({
+		copy,
+		name,
+		showTooltip = true,
+		tooltipPosition = 'bottom',
+		className,
+		...props
+	}): JSX.Element => {
 		const copyToClipboard = (text: string) => {
 			navigator.clipboard
 				.writeText(text)
 				.then(() => {
-					toast.success('ID copiado para a área de transferência!')
+					toast.success(
+						name ? `${name} copiado com sucesso!` : 'Copiado com sucesso!'
+					)
 				})
 				.catch(err => {
 					toast.error('Erro ao copiar o texto: ' + err.message)
@@ -34,15 +46,23 @@ const ButtonClipboard: FC<IButtonClipboard> = memo(
 						<Button
 							size='sm'
 							variant='outline'
-							aria-label='Copiar ID do produto'
-							onClick={() => copyToClipboard(id)}
-							className={cn('h-6 cursor-pointer text-xs', className)}
+							rightIcon='clipboardText'
+							aria-label={name ? `Copiar ${name}` : 'Copiar'}
+							onClick={() => copyToClipboard(copy)}
+							className={cn(
+								'text-muted-foreground h-6 cursor-pointer text-xs',
+								className
+							)}
 							{...props}
 						>
-							{id}
+							{copy}
 						</Button>
 					</TooltipTrigger>
-					<TooltipContent side='bottom'>Copiar ID do produto</TooltipContent>
+					{showTooltip && (
+						<TooltipContent side={tooltipPosition}>
+							{name ? `Copiar ${name}` : 'Copiar'}
+						</TooltipContent>
+					)}
 				</Tooltip>
 			</TooltipProvider>
 		)

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import type { JSX, ReactElement } from 'react'
+import { lazy, Suspense, type JSX, type ReactElement } from 'react'
 import type { GetServerSideProps } from 'next'
 
 import { Icon } from '@/components/ui/icon'
@@ -13,6 +13,16 @@ import { withCompany } from '@/utils/with-company'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetCustomerById } from '@/hooks/swr/use-get-customer-by-id'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger
+} from '@/components/ui/popover'
+import { Button } from '@/components/ui/button'
+
+const InfoSection = lazy(
+	() => import('@/components/pages/view-customer/info-section')
+)
 
 const CustomerId: NextPageWithLayout = (): JSX.Element => {
 	const router = useRouter()
@@ -108,13 +118,29 @@ const CustomerId: NextPageWithLayout = (): JSX.Element => {
 									height={40}
 									alt={`Avatar de ${customer.name}`}
 									src={customer.avatar || '/images/avatar-placeholder.png'}
-									className='size-10 rounded-full'
+									className='rounded-full'
 								/>
 							</ImageDialog>
 
 							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 md:text-3xl'>
 								{customer.name}
 							</h2>
+
+							<div className='ml-auto flex xl:hidden'>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button size='icon' variant='outline'>
+											<Icon.info />
+										</Button>
+									</PopoverTrigger>
+
+									<PopoverContent align='end' className='w-80 border-none p-0'>
+										<Suspense fallback={<Skeleton className='h-80 w-full' />}>
+											<InfoSection customer={customer} />
+										</Suspense>
+									</PopoverContent>
+								</Popover>
+							</div>
 						</div>
 
 						<div className='mx-auto flex w-full flex-col items-center justify-center gap-6'>
@@ -124,7 +150,11 @@ const CustomerId: NextPageWithLayout = (): JSX.Element => {
 						</div>
 					</div>
 
-					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'></div>
+					<div className='hidden w-full max-w-80 flex-col gap-6 xl:flex'>
+						<Suspense fallback={<Skeleton className='h-80 w-full' />}>
+							<InfoSection customer={customer} />
+						</Suspense>
+					</div>
 				</main>
 			</div>
 		</>

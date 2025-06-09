@@ -4,7 +4,7 @@ import type { Product } from '@/types'
 import { Badge } from '@/components/ui/badge'
 import { formatDateTime } from '@/utils/format'
 import { Button } from '@/components/ui/button'
-import { ButtonClipboard } from './button-clipboard'
+import { ButtonClipboard } from '@/components/app/button-clipboard'
 
 type IInfoSection = {
 	product: Product
@@ -20,11 +20,7 @@ const InfoSection: FC<IInfoSection> = memo(({ product }): JSX.Element => {
 
 				<div className='flex flex-col gap-2'>
 					<p className='text-foreground flex items-center justify-between gap-1 text-sm'>
-						ID{' '}
-						<ButtonClipboard
-							id={product.id}
-							className='text-muted-foreground'
-						/>
+						ID <ButtonClipboard name='ID do produto' copy={product.id} />
 					</p>
 					<p className='text-foreground flex items-center justify-between gap-1 text-sm'>
 						Data de criação{' '}

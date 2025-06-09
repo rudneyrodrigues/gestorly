@@ -29,6 +29,7 @@ import {
 	CircleNotchIcon,
 	CaretUpDownIcon,
 	ArrowUpRightIcon,
+	ClipboardTextIcon,
 	AsteriskSimpleIcon,
 	MagnifyingGlassIcon,
 	CaretDoubleLeftIcon,
@@ -67,6 +68,7 @@ export const Icon = {
 	caretUpDown: CaretUpDownIcon,
 	asterisk: AsteriskSimpleIcon,
 	arrowUpRight: ArrowUpRightIcon,
+	clipboardText: ClipboardTextIcon,
 	magnifyingGlass: MagnifyingGlassIcon,
 	caretDoubleLeft: CaretDoubleLeftIcon,
 	caretDoubleRight: CaretDoubleRightIcon
