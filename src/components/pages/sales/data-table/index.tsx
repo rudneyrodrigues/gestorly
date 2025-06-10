@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { DataTablePagination } from './pagination'
 import { DataTableViewOptions } from './view-options'
-import { useGetCustomers } from '@/hooks/swr/use-get-customers'
 import {
 	Table,
 	TableRow,
@@ -40,7 +39,6 @@ const DataTable = <TData, TValue>({
 	data
 }: DataTableProps<TData, TValue>) => {
 	const isMobile = useIsMobile()
-	const { loading, mutate } = useGetCustomers()
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,7 +67,7 @@ const DataTable = <TData, TValue>({
 	})
 
 	const updateTableData = React.useCallback(async () => {
-		await mutate()
+		// await mutate()
 
 		toast.success('Dados atualizados com sucesso!')
 	}, [])
@@ -78,17 +76,18 @@ const DataTable = <TData, TValue>({
 		<div className='w-full space-y-4'>
 			<div className='flex items-center gap-2 p-2'>
 				<Input
-					placeholder='Filtrar clientes pelo nome...'
-					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+					type='search'
+					placeholder='Filtrar por ID'
+					value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
 					onChange={event =>
-						table.getColumn('name')?.setFilterValue(event.target.value)
+						table.getColumn('id')?.setFilterValue(event.target.value)
 					}
 					className='max-w-sm'
 				/>
 
 				<div className='flex items-center justify-end gap-2'>
 					<Button
-						loading={loading}
+						// loading={loading}
 						variant='outline'
 						onClick={updateTableData}
 						size={isMobile ? 'icon' : 'default'}
@@ -129,7 +128,7 @@ const DataTable = <TData, TValue>({
 								data-state={row.getIsSelected() && 'selected'}
 							>
 								{row.getVisibleCells().map(cell => (
-									<TableCell key={cell.id}>
+									<TableCell key={cell.id} className='max-w-[150px] truncate'>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</TableCell>
 								))}
@@ -149,7 +148,6 @@ const DataTable = <TData, TValue>({
 		</div>
 	)
 }
-DataTable.displayName = 'DataTable'
 
 export { DataTable }
 export * from './columns'

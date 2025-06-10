@@ -2,13 +2,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { Customer } from '@/types'
+import { Sale } from '@/types'
 import { Icon } from '@/components/ui/icon'
-import { ImageDialog } from '@/components/app'
+import { formatDate } from '@/utils/format'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './column-header'
-import { formatPhone, formatCpfOrCnpj } from '@/utils/format'
 import {
 	DropdownMenu,
 	DropdownMenuItem,
@@ -18,7 +17,7 @@ import {
 	DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
-export const columns: ColumnDef<Customer>[] = [
+export const columns: ColumnDef<Sale>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -42,100 +41,85 @@ export const columns: ColumnDef<Customer>[] = [
 		enableHiding: false
 	},
 	{
-		accessorKey: 'avatar',
-		header: () => <span className='md:hidden xl:block'>Avatar</span>,
-		cell: ({ row }) => {
-			const customer = row.original
-
-			if (!customer.avatar) {
-				return (
-					<div className='bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full'>
-						<Icon.user className='text-muted-foreground size-4' />
-					</div>
-				)
-			}
-
-			return (
-				<ImageDialog
-					className='size-8 cursor-pointer rounded-full md:hidden xl:block'
-					imageUrl={customer.avatar}
-				>
-					<Image
-						width={32}
-						height={32}
-						loading='lazy'
-						quality={100}
-						src={customer.avatar}
-						alt={`Avatar de ${customer.name}`}
-						className='h-full w-full'
-					/>
-				</ImageDialog>
-			)
-		}
-	},
-	{
-		accessorKey: 'name',
+		accessorKey: 'id',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Nome' />
+			<DataTableColumnHeader
+				column={column}
+				title='ID da venda'
+				className='block md:hidden lg:block'
+			/>
 		),
 		cell: ({ row }) => {
-			const customer = row.original
+			const sale = row.original
 
 			return (
 				<Link
-					href={`/customers/${customer.id}`}
-					className='font-medium hover:underline hover:underline-offset-4'
+					key={sale.id}
+					href={`/sales/${sale.id}`}
+					suppressHydrationWarning
+					className='block truncate font-medium hover:underline hover:underline-offset-4 md:hidden lg:block'
 				>
-					{customer.name}
+					{sale.id}
 				</Link>
 			)
 		}
 	},
 	{
-		accessorKey: 'email',
+		accessorKey: 'product',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Email' />
+			<DataTableColumnHeader column={column} title='Produto' />
 		),
 		cell: ({ row }) => {
-			const customer = row.original
+			const sale = row.original
 
-			return <span className='truncate'>{customer.email}</span>
+			return <span className='truncate'>{sale.product}</span>
 		}
 	},
 	{
-		accessorKey: 'phone',
+		accessorKey: 'customer',
 		header: ({ column }) => (
 			<DataTableColumnHeader
+				title='Nome'
 				column={column}
-				title='Telefone'
-				className='md:hidden xl:block'
+				className='block md:hidden lg:block'
 			/>
 		),
 		cell: ({ row }) => {
-			const customer = row.original
+			const sale = row.original
 
 			return (
-				<span className='truncate md:hidden xl:block'>
-					{formatPhone(String(customer.phone))}
+				<span className='block truncate md:hidden lg:block'>
+					{sale.customer}
 				</span>
 			)
 		}
 	},
 	{
-		accessorKey: 'cpf_or_cnpj',
+		accessorKey: 'quantity',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Quantidade' />
+		),
+		cell: ({ row }) => {
+			const sale = row.original
+
+			return <span className='truncate'>{sale.quantity}</span>
+		}
+	},
+	{
+		accessorKey: 'date',
 		header: ({ column }) => (
 			<DataTableColumnHeader
+				title='Data'
 				column={column}
-				title='CPF/CNPJ'
-				className='md:hidden xl:block'
+				className='block md:hidden lg:block'
 			/>
 		),
 		cell: ({ row }) => {
-			const customer = row.original
+			const sale = row.original
 
 			return (
-				<span suppressHydrationWarning className='truncate md:hidden xl:block'>
-					{formatCpfOrCnpj(String(customer.cpf_or_cnpj))}
+				<span className='block truncate md:hidden lg:block'>
+					{formatDate(sale.date)}
 				</span>
 			)
 		}
@@ -143,7 +127,7 @@ export const columns: ColumnDef<Customer>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const customer = row.original
+			const sale = row.original
 
 			return (
 				<div className='flex items-center justify-end'>
@@ -157,13 +141,13 @@ export const columns: ColumnDef<Customer>[] = [
 						<DropdownMenuContent align='end'>
 							{/* <DropdownMenuLabel>Ações</DropdownMenuLabel> */}
 							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(customer.id)}
+								onClick={() => navigator.clipboard.writeText(sale.id)}
 							>
-								Copiar ID do cliente
+								Copiar ID da venda
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem asChild>
-								<Link href={`/customers/${customer.id}`}>Ver detalhes</Link>
+								<Link href={`/sales/${sale.id}`}>Ver detalhes</Link>
 							</DropdownMenuItem>
 							{/* <DropdownMenuItem>Deletar cliente</DropdownMenuItem> */}
 						</DropdownMenuContent>

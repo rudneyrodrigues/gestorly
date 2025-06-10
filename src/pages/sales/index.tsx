@@ -1,13 +1,22 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import type { GetServerSideProps } from 'next'
 import type { JSX, ReactElement } from 'react'
 
+import { cn } from '@/lib/utils'
+import { Icon } from '@/components/ui/icon'
 import { withSSRAuth } from '@/utils/with-ssr'
+import { Button } from '@/components/ui/button'
+import { useIsMobile } from '@/hooks/use-mobile'
 import type { NextPageWithLayout } from '@/types'
 import { Layout } from '@/components/pages/layout'
 import { withCompany } from '@/utils/with-company'
+import { columns, DataTable } from '@/components/pages/sales'
+import { salesData } from '@/components/pages/sales/data-table/sales'
 
 const Sales: NextPageWithLayout = (): JSX.Element => {
+	const isMobile = useIsMobile()
+
 	return (
 		<>
 			<Head>
@@ -25,9 +34,24 @@ const Sales: NextPageWithLayout = (): JSX.Element => {
 						<h2 className='scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0'>
 							Vendas
 						</h2>
+
+						<Link href='sales/register' passHref>
+							<Button
+								variant='secondary'
+								size={isMobile ? 'icon' : 'default'}
+								className='cursor-pointer'
+							>
+								<span className={cn('hidden', !isMobile && 'inline-flex')}>
+									Cadastrar venda
+								</span>
+								<Icon.plus />
+							</Button>
+						</Link>
 					</div>
 
-					<section className='w-full flex-1 overflow-x-auto rounded-md'></section>
+					<section className='w-full flex-1 overflow-x-auto rounded-md'>
+						<DataTable columns={columns} data={salesData} />
+					</section>
 				</main>
 			</div>
 		</>

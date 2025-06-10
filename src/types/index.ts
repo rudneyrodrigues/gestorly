@@ -1,4 +1,5 @@
 export * from './page'
+export * from './sales'
 export * from './company'
 export * from './product'
 export * from './customer'
